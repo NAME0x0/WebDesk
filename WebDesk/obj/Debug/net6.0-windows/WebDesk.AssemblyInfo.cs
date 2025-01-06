@@ -11,10 +11,11 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("WebDesk")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("Your Name")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyDescriptionAttribute("WebDesk - Web-based Interactive Wallpaper Engine")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1316021e88b1b328e54c91525f3e0f7678b54daf")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+30aef8e0bd67fb0b1c28f5fcabe3140234137493")]
 [assembly: System.Reflection.AssemblyProductAttribute("WebDesk")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WebDesk")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
