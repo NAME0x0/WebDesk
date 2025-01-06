@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using WebDesk.Services;
 using WebDesk.Helpers;
+using System.Windows.Forms;
 
 namespace WebDesk.Windows
 {
@@ -23,8 +24,25 @@ namespace WebDesk.Windows
 
         private async void InitializeAsync()
         {
-            await webView.EnsureCoreWebView2Async();
-            LoadWallpaper();
+            try
+            {
+                await webView.EnsureCoreWebView2Async();
+                webView.CoreWebView2.Settings.IsStatusBarEnabled = false;
+                webView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
+                LoadWallpaper();
+            }
+            catch (CoreWebView2RuntimeNotFoundException)
+            {
+                MessageBox.Show("WebView2 Runtime not found. Please install it first.",
+                    "Runtime Missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Current.Shutdown();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to initialize WebView2: {ex.Message}",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Current.Shutdown();
+            }
         }
 
         private void LoadWallpaper()
@@ -57,6 +75,18 @@ namespace WebDesk.Windows
         {
             var settingsWindow = new SettingsWindow(_settings);
             settingsWindow.Show();
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            SetWallpaperWindow();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            _notifyIcon.Dispose();
+            base.OnClosed(e);
         }
     }
 }

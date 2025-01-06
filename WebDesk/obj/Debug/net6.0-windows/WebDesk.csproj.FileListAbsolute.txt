@@ -1,0 +1,14 @@
+C:\Users\mafsa\Desktop\GIT\WebDesk\WebDesk\obj\Debug\net6.0-windows\WebDesk.csproj.AssemblyReference.cache
+C:\Users\mafsa\Desktop\GIT\WebDesk\WebDesk\obj\Debug\net6.0-windows\Windows\MainWindow.baml
+C:\Users\mafsa\Desktop\GIT\WebDesk\WebDesk\obj\Debug\net6.0-windows\Windows\SettingsWindow.baml
+C:\Users\mafsa\Desktop\GIT\WebDesk\WebDesk\obj\Debug\net6.0-windows\Windows\MainWindow.g.cs
+C:\Users\mafsa\Desktop\GIT\WebDesk\WebDesk\obj\Debug\net6.0-windows\Windows\SettingsWindow.g.cs
+C:\Users\mafsa\Desktop\GIT\WebDesk\WebDesk\obj\Debug\net6.0-windows\App.g.cs
+C:\Users\mafsa\Desktop\GIT\WebDesk\WebDesk\obj\Debug\net6.0-windows\WebDesk_Content.g.cs
+C:\Users\mafsa\Desktop\GIT\WebDesk\WebDesk\obj\Debug\net6.0-windows\WebDesk_MarkupCompile.cache
+C:\Users\mafsa\Desktop\GIT\WebDesk\WebDesk\obj\Debug\net6.0-windows\WebDesk.g.resources
+C:\Users\mafsa\Desktop\GIT\WebDesk\WebDesk\obj\Debug\net6.0-windows\WebDesk.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mafsa\Desktop\GIT\WebDesk\WebDesk\obj\Debug\net6.0-windows\WebDesk.AssemblyInfoInputs.cache
+C:\Users\mafsa\Desktop\GIT\WebDesk\WebDesk\obj\Debug\net6.0-windows\WebDesk.AssemblyInfo.cs
+C:\Users\mafsa\Desktop\GIT\WebDesk\WebDesk\obj\Debug\net6.0-windows\WebDesk.csproj.CoreCompileInputs.cache
+C:\Users\mafsa\Desktop\GIT\WebDesk\WebDesk\obj\Debug\net6.0-windows\WebDesk.sourcelink.json
