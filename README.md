@@ -24,7 +24,7 @@ A dynamic wallpaper engine that transforms web content into interactive desktop 
 
 2. **Clone the Repository**
    ```bash
-   git clone https://github.com/yourusername/WebDesk.git
+   git clone https://github.com/NAME0x0/WebDesk.git
    cd WebDesk
    ```
 
