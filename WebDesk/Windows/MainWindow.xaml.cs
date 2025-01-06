@@ -74,6 +74,7 @@ namespace WebDesk.Windows
         private void ShowSettings()
         {
             var settingsWindow = new SettingsWindow(_settings);
+            settingsWindow.Closed += (s, e) => LoadWallpaper();
             settingsWindow.Show();
         }
 
