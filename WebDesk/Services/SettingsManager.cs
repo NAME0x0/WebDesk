@@ -1,7 +1,7 @@
 using System.IO;
 using System.Text.Json;
 
-namespace WebDesk
+namespace WebDesk.Services
 {
     public class SettingsManager
     {

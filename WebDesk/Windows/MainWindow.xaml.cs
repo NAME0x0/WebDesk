@@ -2,8 +2,10 @@ using Microsoft.Web.WebView2.Core;
 using System.Windows;
 using System;
 using System.IO;
+using WebDesk.Services;
+using WebDesk.Helpers;
 
-namespace WebDesk
+namespace WebDesk.Windows
 {
     public partial class MainWindow : Window
     {

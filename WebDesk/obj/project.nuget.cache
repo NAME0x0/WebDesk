@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "dgSpecHash": "T5Ac8wp88po=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\mafsa\\Desktop\\GIT\\WebDesk\\WebDesk\\WebDesk.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\mafsa\\.nuget\\packages\\microsoft.web.webview2\\1.0.2088.41\\microsoft.web.webview2.1.0.2088.41.nupkg.sha512",
+    "C:\\Users\\mafsa\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.36\\microsoft.windowsdesktop.app.ref.6.0.36.nupkg.sha512",
+    "C:\\Users\\mafsa\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.36\\microsoft.netcore.app.ref.6.0.36.nupkg.sha512",
+    "C:\\Users\\mafsa\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.36\\microsoft.aspnetcore.app.ref.6.0.36.nupkg.sha512",
+    "C:\\Users\\mafsa\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.36\\microsoft.netcore.app.host.win-x64.6.0.36.nupkg.sha512"
+  ],
+  "logs": []
+}
