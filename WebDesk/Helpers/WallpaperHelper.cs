@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 
-namespace WebDesk
+namespace WebDesk.Helpers
 {
     public static class WallpaperHelper
     {

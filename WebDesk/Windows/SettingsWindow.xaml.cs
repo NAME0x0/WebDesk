@@ -1,7 +1,8 @@
 using Microsoft.Win32;
 using System.Windows;
+using WebDesk.Services;
 
-namespace WebDesk
+namespace WebDesk.Windows
 {
     public partial class SettingsWindow : Window
     {
