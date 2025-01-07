@@ -4,14 +4,14 @@ using System;
 using System.IO;
 using WebDesk.Services;
 using WebDesk.Helpers;
-using System.Windows.Forms;
+using Forms = System.Windows.Forms;
 
 namespace WebDesk.Windows
 {
     public partial class MainWindow : Window
     {
         private readonly SettingsManager _settings;
-        private System.Windows.Forms.NotifyIcon _notifyIcon;
+        private Forms.NotifyIcon _notifyIcon = new();
 
         public MainWindow()
         {
@@ -26,21 +26,22 @@ namespace WebDesk.Windows
         {
             try
             {
-                await webView.EnsureCoreWebView2Async();
+                var env = await CoreWebView2Environment.CreateAsync();
+                await webView.EnsureCoreWebView2Async(env);
                 webView.CoreWebView2.Settings.IsStatusBarEnabled = false;
                 webView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
                 LoadWallpaper();
             }
-            catch (CoreWebView2RuntimeNotFoundException)
+            catch (Exception ex) when (ex is InvalidOperationException || ex is System.Runtime.InteropServices.COMException)
             {
-                MessageBox.Show("WebView2 Runtime not found. Please install it first.",
-                    "Runtime Missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Application.Current.Shutdown();
+                Forms.MessageBox.Show("WebView2 Runtime not found. Please install it first.",
+                    "Runtime Missing", Forms.MessageBoxButtons.OK, Forms.MessageBoxIcon.Error);
+                System.Windows.Application.Current.Shutdown();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to initialize WebView2: {ex.Message}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Forms.MessageBox.Show($"Failed to initialize WebView2: {ex.Message}",
+                    "Error", Forms.MessageBoxButtons.OK, Forms.MessageBoxIcon.Error);
                 Application.Current.Shutdown();
             }
         }
@@ -55,15 +56,12 @@ namespace WebDesk.Windows
 
         private void SetupTrayIcon()
         {
-            _notifyIcon = new System.Windows.Forms.NotifyIcon
-            {
-                Icon = System.Drawing.SystemIcons.Application,
-                Visible = true
-            };
+            _notifyIcon.Icon = System.Drawing.SystemIcons.Application;
+            _notifyIcon.Visible = true;
+            _notifyIcon.ContextMenuStrip = new Forms.ContextMenuStrip();
 
-            _notifyIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
-            _notifyIcon.ContextMenuStrip.Items.Add("Settings", null, (s, e) => ShowSettings());
-            _notifyIcon.ContextMenuStrip.Items.Add("Exit", null, (s, e) => Application.Current.Shutdown());
+            _notifyIcon.ContextMenuStrip.Items.Add("Settings", System.Drawing.SystemIcons.Application.ToBitmap(), (s, e) => ShowSettings());
+            _notifyIcon.ContextMenuStrip.Items.Add("Exit", System.Drawing.SystemIcons.Error.ToBitmap(), (s, e) => System.Windows.Application.Current.Shutdown());
         }
 
         private void SetWallpaperWindow()
@@ -86,7 +84,10 @@ namespace WebDesk.Windows
 
         protected override void OnClosed(EventArgs e)
         {
-            _notifyIcon.Dispose();
+            if (_notifyIcon != null)
+            {
+                _notifyIcon.Dispose();
+            }
             base.OnClosed(e);
         }
     }
