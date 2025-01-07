@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Text.Json;
-using System.Windows.Forms;
+using Forms = System.Windows.Forms;
 
 namespace WebDesk.Services
 {
@@ -32,8 +32,8 @@ namespace WebDesk.Services
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to save settings: {ex.Message}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Forms.MessageBox.Show($"Failed to save settings: {ex.Message}",
+                    "Error", Forms.MessageBoxButtons.OK, Forms.MessageBoxIcon.Error);
             }
         }
 
@@ -51,8 +51,8 @@ namespace WebDesk.Services
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to load settings: {ex.Message}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Forms.MessageBox.Show($"Failed to load settings: {ex.Message}",
+                    "Error", Forms.MessageBoxButtons.OK, Forms.MessageBoxIcon.Error);
             }
         }
 

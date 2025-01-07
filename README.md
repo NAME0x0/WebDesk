@@ -1,67 +1,138 @@
 # WebDesk
 
-A dynamic wallpaper engine that transforms web content into interactive desktop wallpapers (Windows only).
+Transform any webpage or HTML file into your Windows desktop wallpaper! WebDesk is a powerful tool that lets you use web content as an interactive desktop background.
 
-## Features
-- Load local HTML files as interactive wallpapers
-- Support for HTML, CSS, and JavaScript content
-- Settings management for wallpaper preferences
-- Auto-start with Windows
-- Borderless and frameless display
-- System tray integration
+![WebDesk Preview](docs/preview.png)
 
-## Requirements
-- Windows 10 or later
-- .NET 6.0 SDK or later
-- Microsoft Edge WebView2 Runtime
+## 🌟 Features
 
-## Build Instructions
+- Use local HTML files as live wallpapers
+- Support for modern web technologies:
+  - HTML5
+  - CSS3
+  - JavaScript
+  - WebGL
+- System tray control for easy access
+- Automatic startup option
+- Seamless integration with Windows desktop
+- No coding required for basic use!
 
-1. **Prerequisites Installation**
-   - Install [.NET 6.0 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
-   - Install [Microsoft Edge WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
-   - Install [Visual Studio 2022](https://visualstudio.microsoft.com/) (optional)
+## 🚀 Getting Started
 
-2. **Clone the Repository**
-   ```bash
-   git clone https://github.com/NAME0x0/WebDesk.git
-   cd WebDesk
-   ```
+### Prerequisites
 
-3. **Build the Project**
-   
-   Using Visual Studio:
-   - Open `WebDesk.sln`
-   - Select Build > Build Solution
-   - Or press Ctrl+Shift+B
+Before you begin, you need to install:
 
-   Using Command Line:
-   ```bash
-   dotnet restore
-   dotnet build
-   dotnet run --project WebDesk
-   ```
+1. **Microsoft Edge WebView2 Runtime**
+   - [Download WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
+   - Click "Download Runtime"
+   - Run the installer
+   - Follow the installation wizard
 
-4. **Run the Application**
-   - The built executable will be in `WebDesk/bin/Debug/net6.0-windows/`
-   - Run `WebDesk.exe`
-   - Look for the system tray icon to access settings
+2. **.NET 6.0 Runtime**
+   - [Download .NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0/runtime)
+   - Look for "Windows Desktop Runtime"
+   - Download and install for your system (x64 for most computers)
 
-## Usage
-1. Launch WebDesk
-2. Right-click the system tray icon
-3. Select "Settings"
-4. Browse and select your HTML file
-5. Click Save to apply
+### Installation
 
-## Project Structure
+1. Download the latest release:
+   - Go to the [Releases](https://github.com/NAME0x0/WebDesk/releases) page
+   - Download `WebDesk.zip`
+   - Extract the ZIP file to any location
+
+### First Launch
+
+1. Double-click `WebDesk.exe`
+2. Look for the WebDesk icon in your system tray (bottom-right corner)
+3. Right-click the icon and select "Settings"
+4. Click "Browse" to select your HTML file
+5. Check "Start with Windows" if you want WebDesk to launch automatically
+6. Click "Save"
+
+## 📝 Usage Examples
+
+### Using a Local HTML File
+
+1. Create a simple HTML file (example.html):
+```html
+<!DOCTYPE html>
+<html>
+<body style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4);">
+  <h1>My Custom Wallpaper!</h1>
+</body>
+</html>
+```
+2. Save it anywhere on your computer
+3. Use WebDesk's settings to select this file
+
+### Using Web Content
+
+1. Save any webpage as HTML (complete)
+2. Select the saved HTML file in WebDesk settings
+3. Make sure all resources (images, CSS, JS) are saved locally
+
+## 🛠️ For Developers
+
+### Building from Source
+
+1. Install prerequisites:
+   - [Visual Studio 2022](https://visualstudio.microsoft.com/vs/) (Community Edition is free)
+   - [.NET 6.0 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
+   - [Git](https://git-scm.com/downloads) (optional)
+
+2. Clone & Build:
+```bash
+git clone https://github.com/NAME0x0/WebDesk.git
+cd WebDesk
+dotnet restore
+dotnet build
+```
+
+### Project Structure
 ```
 WebDesk/
-├── Windows/          # WPF window definitions
-├── Services/         # Business logic and services
-├── Helpers/          # Utility and helper classes
-└── Properties/       # Assembly information
+├── Windows/          # User interface windows
+├── Services/         # Background services
+├── Helpers/          # Utility functions
+└── Properties/       # App configuration
 ```
 
-## License
+## 🤝 Contributing
+
+We welcome contributions! Here's how you can help:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+1. **Wallpaper not showing**
+   - Make sure WebView2 Runtime is installed
+   - Check if your HTML file path is correct
+   - Verify the HTML file works in a browser
+
+2. **Black screen**
+   - Check if your graphics drivers are updated
+   - Try running WebDesk as administrator
+
+3. **Won't start with Windows**
+   - Check Windows startup settings
+   - Try reinstalling the application
+
+### Getting Help
+
+- [Open an Issue](https://github.com/NAME0x0/WebDesk/issues)
+
+## 📜 License
+
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [Microsoft WebView2](https://docs.microsoft.com/microsoft-edge/webview2/)
+- [.NET Foundation](https://dotnetfoundation.org/)

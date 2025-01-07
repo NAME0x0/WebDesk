@@ -25,7 +25,7 @@ namespace WebDesk.Helpers
 
         public static void SetWallpaperWindow(Window window)
         {
-            IntPtr progman = FindWindow("Progman", null);
+            IntPtr progman = FindWindow("Progman", string.Empty);  // Changed from null to string.Empty
             var helper = new WindowInteropHelper(window);
             
             SetParent(helper.Handle, progman);
