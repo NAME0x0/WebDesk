@@ -1,0 +1,3 @@
+PyQt6==6.6.1
+PyQt6-WebEngine==6.6.0
+winreg
