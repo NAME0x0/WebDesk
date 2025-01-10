@@ -7,6 +7,9 @@ namespace WebDesk.Services
 {
     public class SettingsManager
     {
+        private const string APP_NAME = "WebDesk";
+        private const string REGISTRY_PATH = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Run";
+        
         private readonly string _settingsPath;
         public string WallpaperPath { get; set; } = string.Empty;
         public bool AutoStart { get; set; } = true;
@@ -15,7 +18,7 @@ namespace WebDesk.Services
         {
             _settingsPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "WebDesk",
+                APP_NAME,
                 "settings.json"
             );
             Directory.CreateDirectory(Path.GetDirectoryName(_settingsPath)!);
@@ -59,18 +62,18 @@ namespace WebDesk.Services
         private void UpdateAutoStart()
         {
             Microsoft.Win32.RegistryKey? key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(
-                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+                REGISTRY_PATH,
                 true);
                 
             if (key != null)
             {
                 if (AutoStart)
                 {
-                    key.SetValue("WebDesk", System.Reflection.Assembly.GetExecutingAssembly().Location);
+                    key.SetValue(APP_NAME, System.Reflection.Assembly.GetExecutingAssembly().Location);
                 }
                 else
                 {
-                    key.DeleteValue("WebDesk", false);
+                    key.DeleteValue(APP_NAME, false);
                 }
             }
         }

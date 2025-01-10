@@ -8,7 +8,10 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>Resources\app.ico</ApplicationIcon>
     <Version>1.0.0</Version>
-    <Authors>Your Name</Authors>
+    <Authors>WebDesk Team</Authors>
+    <Company>WebDesk</Company>
+    <Product>WebDesk</Product>
+    <Copyright>Copyright © WebDesk 2024</Copyright>
     <Description>WebDesk - Web-based Interactive Wallpaper Engine</Description>
   </PropertyGroup>
 
