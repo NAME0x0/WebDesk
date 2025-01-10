@@ -83,7 +83,7 @@ Before you begin, you need to install:
 
 2. Clone & Build:
 ```bash
-git clone https://github.com/NAME0x0/WebDesk.git
+git clone https://github.com/your-username/WebDesk.git
 cd WebDesk
 dotnet restore
 dotnet build
@@ -126,7 +126,7 @@ We welcome contributions! Here's how you can help:
 
 ### Getting Help
 
-- [Open an Issue](https://github.com/NAME0x0/WebDesk/issues)
+- [Open an Issue](https://github.com/your-username/WebDesk/issues)
 
 ## 📜 License
 
