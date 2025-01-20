@@ -7,9 +7,29 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('builder')
 
+def ensure_dependencies():
+    """Ensure all required packages are installed"""
+    try:
+        subprocess.run([
+            sys.executable, '-m', 'pip', 'install',
+            'pyinstaller',
+            'PyQt6',
+            'PyQt6-WebEngine',
+            'pywin32',
+            'requests'
+        ], check=True)
+        return True
+    except Exception as e:
+        logger.error(f"Failed to install dependencies: {e}")
+        return False
+
 def build():
     """Build portable executable"""
     try:
+        # Install dependencies first
+        if not ensure_dependencies():
+            return False
+
         project_root = Path(__file__).resolve().parent
         
         # Clean previous builds
