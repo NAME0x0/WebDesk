@@ -3,14 +3,32 @@ import sys
 from pathlib import Path
 import shutil
 import logging
+import site
+import os
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('builder')
 
+def get_python_paths():
+    """Get all relevant Python paths"""
+    paths = [
+        Path(sys.prefix) / 'Scripts',
+        Path(site.USER_BASE) / 'Python312' / 'Scripts',
+        Path(os.path.expanduser('~')) / 'AppData' / 'Roaming' / 'Python' / 'Python312' / 'Scripts'
+    ]
+    return [p for p in paths if p.exists()]
+
+def find_pyinstaller():
+    """Find PyInstaller executable"""
+    for path in get_python_paths():
+        pyinstaller = path / 'pyinstaller.exe'
+        if pyinstaller.exists():
+            return str(pyinstaller)
+    return None
+
 def ensure_dependencies():
     """Ensure all required packages are installed"""
     try:
-        # Use pip directly with the full path
         pip_cmd = [sys.executable, '-m', 'pip', 'install', '--user']
         requirements = [
             'pyinstaller',
@@ -18,26 +36,28 @@ def ensure_dependencies():
             'PyQt6-WebEngine',
             'pywin32',
             'requests',
-            'pillow'  # For icon creation
+            'pillow'
         ]
         
         logger.info("Installing dependencies...")
         for req in requirements:
             subprocess.run([*pip_cmd, req], check=True)
-            logger.info(f"Installed {req}")
-        
-        # Verify PyInstaller installation
-        subprocess.run([sys.executable, '-m', 'pyinstaller', '--version'], check=True)
-        return True
+            
+        pyinstaller_path = find_pyinstaller()
+        if not pyinstaller_path:
+            raise RuntimeError("PyInstaller not found in PATH")
+            
+        return pyinstaller_path
     except Exception as e:
         logger.error(f"Failed to install dependencies: {e}")
-        return False
+        return None
 
 def build():
     """Build portable executable"""
     try:
-        # Ensure dependencies first
-        if not ensure_dependencies():
+        # Get PyInstaller path
+        pyinstaller_path = ensure_dependencies()
+        if not pyinstaller_path:
             return False
             
         project_root = Path(__file__).resolve().parent
@@ -50,10 +70,9 @@ def build():
         if not (project_root / 'Resources' / 'app.ico').exists():
             subprocess.run([sys.executable, 'create_icon.py'], check=True)
 
-        # Run PyInstaller directly as a module
+        # Run PyInstaller using full path
         subprocess.run([
-            sys.executable, 
-            '-m', 'pyinstaller',
+            pyinstaller_path,
             '--noconfirm',
             '--onefile',
             '--noconsole',
