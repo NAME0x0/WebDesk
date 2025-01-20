@@ -1,6 +1,7 @@
-# Build outputs
+# Build and release outputs
 dist/
 build/
+releases/
 __pycache__/
 *.pyc
 *.pyo

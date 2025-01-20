@@ -62,8 +62,8 @@ def build():
             
         project_root = Path(__file__).resolve().parent
         
-        # Clean previous builds
-        for path in ['build', 'dist']:
+        # Clean previous builds and releases
+        for path in ['build', 'dist', 'releases']:
             shutil.rmtree(project_root / path, ignore_errors=True)
 
         # Create icon if missing
@@ -80,7 +80,9 @@ def build():
             '--noconfirm',
             '--onefile',
             '--noconsole',
-            '--distpath', str(releases_dir),
+            '--distpath', str(releases_dir),  # Output to releases directory
+            '--workpath', str(project_root / 'build'),
+            '--specpath', str(project_root / 'build'),
             '--add-data', 'Resources/*;Resources',
             '--hidden-import', 'win32gui',
             '--hidden-import', 'win32con',
