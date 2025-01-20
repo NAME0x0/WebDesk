@@ -10,14 +10,24 @@ logger = logging.getLogger('builder')
 def ensure_dependencies():
     """Ensure all required packages are installed"""
     try:
-        subprocess.run([
-            sys.executable, '-m', 'pip', 'install',
+        # Use pip directly with the full path
+        pip_cmd = [sys.executable, '-m', 'pip', 'install', '--user']
+        requirements = [
             'pyinstaller',
             'PyQt6',
             'PyQt6-WebEngine',
             'pywin32',
-            'requests'
-        ], check=True)
+            'requests',
+            'pillow'  # For icon creation
+        ]
+        
+        logger.info("Installing dependencies...")
+        for req in requirements:
+            subprocess.run([*pip_cmd, req], check=True)
+            logger.info(f"Installed {req}")
+        
+        # Verify PyInstaller installation
+        subprocess.run([sys.executable, '-m', 'pyinstaller', '--version'], check=True)
         return True
     except Exception as e:
         logger.error(f"Failed to install dependencies: {e}")
@@ -26,68 +36,34 @@ def ensure_dependencies():
 def build():
     """Build portable executable"""
     try:
-        # Install dependencies first
+        # Ensure dependencies first
         if not ensure_dependencies():
             return False
-
+            
         project_root = Path(__file__).resolve().parent
         
         # Clean previous builds
         for path in ['build', 'dist']:
             shutil.rmtree(project_root / path, ignore_errors=True)
 
-        # Create spec file
-        spec_content = '''# -*- mode: python ; coding: utf-8 -*-
+        # Create icon if missing
+        if not (project_root / 'Resources' / 'app.ico').exists():
+            subprocess.run([sys.executable, 'create_icon.py'], check=True)
 
-block_cipher = None
-
-a = Analysis(
-    ['src/app.py'],
-    pathex=[],
-    binaries=[],
-    datas=[('Resources/*', 'Resources')],
-    hiddenimports=['win32gui', 'win32con', 'PyQt6.QtWebEngineWidgets'],
-    hookspath=[],
-    hooksconfig={},
-    runtime_hooks=[],
-    excludes=[],
-    win_no_prefer_redirects=False,
-    win_private_assemblies=False,
-    cipher=block_cipher,
-    noarchive=False,
-)
-pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
-
-exe = EXE(
-    pyz,
-    a.scripts,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
-    [],
-    name='WebDesk',
-    debug=False,
-    bootloader_ignore_signals=False,
-    strip=False,
-    upx=True,
-    upx_exclude=[],
-    runtime_tmpdir=None,
-    console=False,
-    disable_windowed_traceback=False,
-    target_arch=None,
-    codesign_identity=None,
-    entitlements_file=None,
-    icon='Resources/app.ico'
-)
-'''
-        
-        with open('WebDesk.spec', 'w') as f:
-            f.write(spec_content)
-
-        # Run PyInstaller
+        # Run PyInstaller directly as a module
         subprocess.run([
-            sys.executable, '-m', 'pyinstaller',
-            'WebDesk.spec'
+            sys.executable, 
+            '-m', 'pyinstaller',
+            '--noconfirm',
+            '--onefile',
+            '--noconsole',
+            '--add-data', 'Resources/*;Resources',
+            '--hidden-import', 'win32gui',
+            '--hidden-import', 'win32con',
+            '--hidden-import', 'PyQt6.QtWebEngineWidgets',
+            '--name', 'WebDesk',
+            '--icon', 'Resources/app.ico',
+            'src/app.py'
         ], check=True)
 
         logger.info("Build completed successfully!")
