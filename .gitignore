@@ -1,0 +1,21 @@
+# Build outputs
+dist/
+build/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.spec
+
+# Virtual environment
+venv/
+env/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+
+# Temporary files
+temp/
+*.tmp

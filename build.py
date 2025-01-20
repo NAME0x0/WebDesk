@@ -70,12 +70,17 @@ def build():
         if not (project_root / 'Resources' / 'app.ico').exists():
             subprocess.run([sys.executable, 'create_icon.py'], check=True)
 
+        # Create releases directory
+        releases_dir = project_root / 'releases'
+        releases_dir.mkdir(exist_ok=True)
+
         # Run PyInstaller using full path
         subprocess.run([
             pyinstaller_path,
             '--noconfirm',
             '--onefile',
             '--noconsole',
+            '--distpath', str(releases_dir),
             '--add-data', 'Resources/*;Resources',
             '--hidden-import', 'win32gui',
             '--hidden-import', 'win32con',
