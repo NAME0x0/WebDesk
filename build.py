@@ -9,40 +9,46 @@ logger = logging.getLogger('builder')
 
 def build():
     """Build portable executable"""
-    project_root = Path(__file__).parent
-    
-    # Clean previous builds
-    for path in ['build', 'dist']:
-        shutil.rmtree(project_root / path, ignore_errors=True)
-    
-    # Verify resources
-    if not (project_root / 'Resources' / 'app.ico').exists():
-        logger.error("Missing app.ico in Resources folder")
-        return False
-    
     try:
-        subprocess.run([
-            'pyinstaller',
+        # Get absolute paths
+        project_root = Path(__file__).resolve().parent
+        src_path = project_root / 'src' / 'app.py'
+        
+        logger.info(f"Building from: {src_path}")
+        
+        # Verify source exists
+        if not src_path.exists():
+            logger.error(f"Source file not found: {src_path}")
+            return False
+
+        # Run PyInstaller
+        result = subprocess.run([
+            sys.executable, '-m', 'pyinstaller',
             '--noconfirm',
             '--onefile',
             '--noconsole',
-            '--add-data', 'Resources/*;Resources',
+            '--add-data', f'Resources/*;Resources',
             '--hidden-import', 'win32gui',
             '--hidden-import', 'win32con',
             '--name', 'WebDesk',
             '--icon', 'Resources/app.ico',
-            'src/app.py'
-        ], check=True)
+            str(src_path)
+        ], check=True, capture_output=True, text=True)
+        
+        logger.info(result.stdout)
+        
+        if result.stderr:
+            logger.error(result.stderr)
         
         # Add version information
-        (project_root / 'dist' / 'version.txt').write_text('1.0.0')
+        version_file = project_root / 'dist' / 'version.txt'
+        version_file.write_text('1.0.0')
         
-        logger.info("Build completed successfully!")
-        logger.info(f"Output: {project_root / 'dist' / 'WebDesk.exe'}")
+        logger.info(f"Build successful: {project_root / 'dist' / 'WebDesk.exe'}")
         return True
         
     except Exception as e:
-        logger.error(f"Build failed: {e}")
+        logger.error(f"Build failed: {str(e)}")
         return False
 
 if __name__ == '__main__':

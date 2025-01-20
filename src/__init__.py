@@ -1,1 +1,0 @@
-"""WebDesk Application"""
