@@ -10,35 +10,86 @@ logger = logging.getLogger('release_builder')
 def build_release():
     """Build release version of WebDesk"""
     try:
+        project_root = Path(__file__).parent
+        
         # Clean previous builds
         for path in ['build', 'dist']:
-            shutil.rmtree(path, ignore_errors=True)
+            shutil.rmtree(project_root / path, ignore_errors=True)
 
-        # Ensure PyInstaller is installed
-        subprocess.run([sys.executable, '-m', 'pip', 'install', 'pyinstaller'], check=True)
+        # Ensure resources directory exists
+        resources_dir = project_root / 'Resources'
+        resources_dir.mkdir(exist_ok=True)
+
+        # Check for required files
+        required_files = [
+            'src/main.py',
+            'src/core.py',
+            'src/ui.py',
+            'src/updater.py',
+            'Resources/app.ico'
+        ]
+
+        for file in required_files:
+            if not (project_root / file).exists():
+                logger.error(f"Missing required file: {file}")
+                return False
+
+        # Create spec file
+        spec_content = f"""
+# -*- mode: python ; coding: utf-8 -*-
+
+a = Analysis(
+    ['{project_root / "src" / "main.py"}'],
+    pathex=[r'{project_root}'],
+    binaries=[],
+    datas=[('Resources/*', 'Resources')],
+    hiddenimports=['win32gui', 'win32con'],
+    hookspath=[],
+    hooksconfig={{}},
+    runtime_hooks=[],
+    excludes=[],
+    noarchive=False,
+)
+pyz = PYZ(a.pure)
+
+exe = EXE(
+    pyz,
+    a.scripts,
+    a.binaries,
+    a.datas,
+    [],
+    name='WebDesk',
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
+    console=False,
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+    icon=['Resources/app.ico'],
+)
+"""
+        with open(project_root / 'WebDesk.spec', 'w') as f:
+            f.write(spec_content)
 
         # Build executable
         subprocess.run([
             'pyinstaller',
-            '--noconfirm',
-            '--onefile',
-            '--noconsole',
-            '--add-data', 'Resources/*;Resources',
-            '--hidden-import', 'win32gui',
-            '--hidden-import', 'win32con',
-            '--hidden-import', 'PyQt6.QtWebEngine',
-            '--icon', 'Resources/app.ico',
-            '--name', 'WebDesk',
-            '--version-file', 'version_info.txt',
-            'src/main.py'
-        ], check=True)
+            '--clean',
+            'WebDesk.spec'
+        ], check=True, cwd=str(project_root))
 
-        # Create version marker
-        with open('dist/version.txt', 'w') as f:
+        # Create version file
+        with open(project_root / 'dist' / 'version.txt', 'w') as f:
             f.write('1.0.0')
 
-        exe_path = Path('dist/WebDesk.exe')
-        if (exe_path.exists()):
+        exe_path = project_root / 'dist' / 'WebDesk.exe'
+        if exe_path.exists():
             logger.info(f"✅ Release built successfully: {exe_path.absolute()}")
             return True
         else:
