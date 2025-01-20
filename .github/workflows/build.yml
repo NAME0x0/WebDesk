@@ -1,4 +1,4 @@
-name: Build and Release
+name: Build Portable App
 
 on:
   push:
@@ -10,118 +10,35 @@ jobs:
   build:
     runs-on: windows-latest
     
-    env:
-      PYTHON_VERSION: '3.10'
-      
     steps:
     - uses: actions/checkout@v3
     
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ env.PYTHON_VERSION }}
-        architecture: 'x64'
+        python-version: '3.10'
         
-    - name: Cache pip packages
-      uses: actions/cache@v3
-      with:
-        path: ~\AppData\Local\pip\Cache
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-          
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install pyinstaller
         
-    - name: Install Inno Setup
-      shell: pwsh
-      run: |
-        $installerUrl = "https://jrsoftware.org/download.php/is.exe"
-        Invoke-WebRequest $installerUrl -OutFile is.exe
-        Start-Process -FilePath "is.exe" -ArgumentList "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-" -Wait
-        
-    - name: Build Application
-      run: |
-        python build.py
-      env:
-        PYTHONPATH: ${{ github.workspace }}
-        
-    - name: Run Tests
-      run: |
-        pip install pytest
-        pytest tests/ -v
+    - name: Build Portable App
+      run: python build.py
         
     - name: Create Release
-      id: create_release
       if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v1
       with:
-        files: |
-          dist/WebDesk-Setup.exe
+        files: dist/WebDesk.exe
         body_path: CHANGELOG.md
-        draft: false
-        prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      if: startsWith(github.ref, 'refs/tags/')
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/WebDesk-Setup.exe
-        asset_name: WebDesk-Setup.exe
-        asset_content_type: application/octet-stream
-        
-    - name: Upload Build Artifacts
+    - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: WebDesk-Build
-        path: |
-          dist/WebDesk-Setup.exe
-          dist/WebDesk/*.exe
-        if-no-files-found: error
-        
-    - name: Cleanup Artifacts
-      run: |
-        Remove-Item -Path dist -Recurse -Force -ErrorAction SilentlyContinue
-        Remove-Item -Path build -Recurse -Force -ErrorAction SilentlyContinue
-        
-    - name: Notify on Failure
-      if: failure()
-      uses: actions/github-script@v6
-      with:
-        script: |
-          github.rest.issues.create({
-            owner: context.repo.owner,
-            repo: context.repo.name,
-            title: 'Build Failed for ' + context.sha,
-            body: 'Build failed in workflow run: ' + context.workflow
-          })
-
-  notify:
-    needs: build
-    runs-on: ubuntu-latest
-    if: always()
-    
-    steps:
-    - name: Check Build Status
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const status = '${{ needs.build.result }}'
-          const message = status === 'success' 
-            ? '✅ Build succeeded!' 
-            : '❌ Build failed!'
-          
-          await github.rest.repos.createCommitComment({
-            owner: context.repo.owner,
-            repo: context.repo.name,
-            commit_sha: context.sha,
-            body: message
-          })
+        name: WebDesk-Portable
+        path: dist/WebDesk.exe
 

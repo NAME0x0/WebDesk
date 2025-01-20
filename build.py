@@ -373,3 +373,34 @@ if __name__ == '__main__':
     success = builder.build()
     sys.exit(0 if success else 1)
 
+import sys
+import subprocess
+from pathlib import Path
+
+def build_portable():
+    try:
+        # PyInstaller command to create single executable
+        subprocess.run([
+            'pyinstaller',
+            '--onefile',
+            '--noconsole',
+            '--add-data', 'Resources/*;Resources',
+            '--name', 'WebDesk',
+            '--icon', 'Resources/app.ico',
+            'src/main.py'
+        ], check=True)
+
+        # Create version file
+        version = "1.0.0"  # Update this as needed
+        with open('dist/version.txt', 'w') as f:
+            f.write(version)
+
+        print("Build completed successfully!")
+        return True
+    except Exception as e:
+        print(f"Build failed: {e}")
+        return False
+
+if __name__ == '__main__':
+    sys.exit(0 if build_portable() else 1)
+

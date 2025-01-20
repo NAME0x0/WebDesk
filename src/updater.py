@@ -1,123 +1,93 @@
 import os
 import sys
 import logging
-import tempfile
-import subprocess
 import requests
-from pathlib import Path
-import ctypes
+import zipfile
 import shutil
-from utils import get_app_path, APP_VERSION, GITHUB_REPO
+from pathlib import Path
+from typing import Optional
 
-class UpdateManager:
+class PortableUpdater:
     def __init__(self):
         self.logger = logging.getLogger('WebDesk.Updater')
-        self.temp_dir = Path(tempfile.gettempdir()) / 'WebDesk'
-        self.app_path = get_app_path()
-        self.current_version = APP_VERSION
-        self._setup()
+        self.app_dir = Path(getattr(sys, '_MEIPASS', Path.cwd()))
+        self.temp_dir = Path(self.app_dir) / 'temp'
+        self.repo_url = "https://api.github.com/repos/NAME0x0/WebDesk"
 
-    def _setup(self):
-        """Initialize update manager"""
-        self.temp_dir.mkdir(parents=True, exist_ok=True)
-        self.backup_dir = self.temp_dir / 'backup'
-
-    def handle_update(self, progress_callback=None):
-        """Handle the complete update process"""
+    def check_for_updates(self) -> Optional[dict]:
         try:
-            self.logger.info("Starting update process...")
-            update_path = self.download_update(progress_callback)
-            if update_path:
-                return self.install_update(update_path)
-            return False
+            response = requests.get(f"{self.repo_url}/releases/latest")
+            if response.status_code == 200:
+                latest = response.json()
+                current_version = self._get_current_version()
+                if latest['tag_name'] > current_version:
+                    return latest
         except Exception as e:
-            self.logger.error(f"Update failed: {e}")
-            self.rollback()
-            return False
+            self.logger.error(f"Update check failed: {e}")
+        return None
 
-    def download_update(self, progress_callback=None):
-        """Download the latest version"""
+    def update(self, release_info: dict) -> bool:
         try:
-            from version_checker import VersionChecker
-            checker = VersionChecker()
-            latest = checker.get_latest_version()
+            # Download new version
+            asset_url = release_info['assets'][0]['browser_download_url']
+            update_zip = self.temp_dir / 'update.zip'
+            self._download_file(asset_url, update_zip)
+
+            # Backup current version
+            self._backup_current()
+
+            # Extract and replace files
+            self._extract_update(update_zip)
             
-            if not latest or not latest.get('assets'):
-                return None
-
-            download_url = latest['assets'][0]['browser_download_url']
-            update_file = self.temp_dir / 'WebDesk-Setup.exe'
-
-            # Download with progress tracking
-            response = requests.get(download_url, stream=True)
-            total_size = int(response.headers.get('content-length', 0))
-            block_size = 1024
-            downloaded = 0
-
-            with open(update_file, 'wb') as f:
-                for data in response.iter_content(block_size):
-                    downloaded += len(data)
-                    f.write(data)
-                    if progress_callback and total_size:
-                        progress = (downloaded / total_size) * 100
-                        progress_callback(int(progress))
-
-            return update_file
-        except Exception as e:
-            self.logger.error(f"Download failed: {e}")
-            return None
-
-    def install_update(self, update_path):
-        """Install the downloaded update"""
-        try:
-            self.create_backup()
-            
-            if ctypes.windll.shell32.IsUserAnAdmin():
-                self._install_update(update_path)
-            else:
-                ctypes.windll.shell32.ShellExecuteW(
-                    None, "runas", str(update_path), "/SILENT", None, 1
-                )
+            # Restart application
+            self._restart_app()
             return True
         except Exception as e:
-            self.logger.error(f"Installation failed: {e}")
-            self.rollback()
+            self.logger.error(f"Update failed: {e}")
+            self._restore_backup()
             return False
 
-    def create_backup(self):
-        """Backup current installation"""
-        if self.app_path.exists():
-            shutil.copytree(self.app_path, self.backup_dir, dirs_exist_ok=True)
+    def _get_current_version(self) -> str:
+        version_file = self.app_dir / 'version.txt'
+        return version_file.read_text().strip() if version_file.exists() else '0.0.0'
 
-    def rollback(self):
-        """Restore from backup if update fails"""
-        if self.backup_dir.exists():
-            shutil.copytree(self.backup_dir, self.app_path, dirs_exist_ok=True)
-            self.logger.info("Rollback completed")
+    def _download_file(self, url: str, dest_path: Path) -> None:
+        self.temp_dir.mkdir(exist_ok=True)
+        response = requests.get(url, stream=True)
+        with open(dest_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
 
-    def _install_update(self, installer_path):
-        """Internal update installation"""
-        try:
-            self._stop_current_instance()
-            subprocess.run([str(installer_path), '/SILENT'], check=True)
-            installer_path.unlink()
-            self._start_new_instance()
-        except Exception as e:
-            self.logger.error(f"Installation failed: {e}")
-            raise
+    def _backup_current(self) -> None:
+        backup_dir = self.temp_dir / 'backup'
+        if backup_dir.exists():
+            shutil.rmtree(backup_dir)
+        shutil.copytree(self.app_dir, backup_dir, ignore=shutil.ignore_patterns('temp'))
 
-    def _stop_current_instance(self):
-        """Stop running instance"""
-        try:
-            subprocess.run(['taskkill', '/F', '/IM', 'WebDesk.exe'])
-        except Exception as e:
-            self.logger.error(f"Failed to stop current instance: {e}")
+    def _extract_update(self, update_zip: Path) -> None:
+        with zipfile.ZipFile(update_zip, 'r') as zip_ref:
+            zip_ref.extractall(self.temp_dir / 'new')
+        
+        # Replace files
+        new_files = self.temp_dir / 'new'
+        for item in new_files.rglob('*'):
+            if item.is_file():
+                rel_path = item.relative_to(new_files)
+                dest = self.app_dir / rel_path
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(item, dest)
 
-    def _start_new_instance(self):
-        """Start new version"""
-        try:
-            exe_path = self.app_path / 'WebDesk.exe'
-            if exe_path.exists():
-                subprocess.Popen([str(exe_path)])
-        except Exception as e:
-            self.logger.error(f"Failed to start new instance: {e}")
+    def _restore_backup(self) -> None:
+        backup_dir = self.temp_dir / 'backup'
+        if backup_dir.exists():
+            for item in backup_dir.rglob('*'):
+                if item.is_file():
+                    rel_path = item.relative_to(backup_dir)
+                    dest = self.app_dir / rel_path
+                    dest.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(item, dest)
+
+    def _restart_app(self) -> None:
+        executable = self.app_dir / 'WebDesk.exe'
+        if executable.exists():
+            os.execl(str(executable), str(executable), *sys.argv[1:])
