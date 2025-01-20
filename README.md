@@ -1,93 +1,55 @@
-# WebDesk
+# WebDesk 🖥️
 
-Transform any webpage or HTML file into your Windows desktop wallpaper! WebDesk is a powerful tool that lets you use web content as an interactive desktop background.
+A lightweight desktop application that lets you set web pages as your Windows wallpaper.
 
 ![WebDesk Preview](docs/preview.png)
 
-## 🌟 Features
+## 🚀 Quick Start
 
-- Use local HTML files as live wallpapers
-- Support for modern web technologies:
-  - HTML5
-  - CSS3
-  - JavaScript
-  - WebGL
-- System tray control for easy access
-- Automatic startup option
-- Seamless integration with Windows desktop
-- No coding required for basic use!
+1. **Download**: Get the latest version from the [Releases](../../releases) page
+2. **Run**: Just double-click `WebDesk.exe` - no installation needed!
+3. **Use**: Right-click the tray icon to access settings and features
 
-## 🚀 Getting Started
+## ✨ Features
 
-### Prerequisites
+- Set any website as your live wallpaper
+- Automatic updates
+- No installation required
+- Lightweight and fast
+- System tray controls
 
-Before you begin, you need to install:
+## 🤔 Common Questions
 
-1. **Microsoft Edge WebView2 Runtime**
-   - [Download WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
-   - Click "Download Runtime"
-   - Run the installer
-   - Follow the installation wizard
+### How do I use WebDesk?
 
-2. **.NET 6.0 Runtime**
-   - [Download .NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0/runtime)
-   - Look for "Windows Desktop Runtime"
-   - Download and install for your system (x64 for most computers)
+1. Download `WebDesk.exe`
+2. Run it
+3. Right-click the tray icon (near the clock)
+4. Choose your settings
+5. Enjoy your live wallpaper!
 
-### Installation
+### How do I update?
 
-1. Download the latest release:
-   - Go to the [Releases](https://github.com/NAME0x0/WebDesk/releases) page
-   - Download `WebDesk.zip`
-   - Extract the ZIP file to any location
+WebDesk checks for updates automatically. When an update is available, it will download and apply it automatically.
 
-### First Launch
+### Where are my settings saved?
 
-1. Double-click `WebDesk.exe`
-2. Look for the WebDesk icon in your system tray (bottom-right corner)
-3. Right-click the icon and select "Settings"
-4. Click "Browse" to select your HTML file
-5. Check "Start with Windows" if you want WebDesk to launch automatically
-6. Click "Save"
-
-## 📝 Usage Examples
-
-### Using a Local HTML File
-
-1. Create a simple HTML file (example.html):
-```html
-<!DOCTYPE html>
-<html>
-<body style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4);">
-  <h1>My Custom Wallpaper!</h1>
-</body>
-</html>
-```
-2. Save it anywhere on your computer
-3. Use WebDesk's settings to select this file
-
-### Using Web Content
-
-1. Save any webpage as HTML (complete)
-2. Select the saved HTML file in WebDesk settings
-3. Make sure all resources (images, CSS, JS) are saved locally
+All settings are saved in the same folder as the application - making it truly portable!
 
 ## 🛠️ For Developers
 
 ### Building from Source
 
-1. Install prerequisites:
-   - [Visual Studio 2022](https://visualstudio.microsoft.com/vs/) (Community Edition is free)
-   - [.NET 6.0 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
-   - [Git](https://git-scm.com/downloads) (optional)
-
-2. Clone & Build:
-```bash
-git clone https://github.com/your-username/WebDesk.git
-cd WebDesk
-dotnet restore
-dotnet build
-```
+1. Install Python 3.10 or newer
+2. Clone this repository
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Run the build script:
+   ```bash
+   python build.py
+   ```
 
 ### Project Structure
 ```

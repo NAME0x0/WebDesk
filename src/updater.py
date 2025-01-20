@@ -65,6 +65,14 @@ class PortableUpdater:
         shutil.copytree(self.app_dir, backup_dir, ignore=shutil.ignore_patterns('temp'))
 
     def _extract_update(self, update_zip: Path) -> None:
+        """Extract update while preserving config"""
+        # Backup config
+        config_backup = None
+        config_path = self.app_dir / 'config.json'
+        if config_path.exists():
+            config_backup = config_path.read_bytes()
+
+        # Extract new files
         with zipfile.ZipFile(update_zip, 'r') as zip_ref:
             zip_ref.extractall(self.temp_dir / 'new')
         
@@ -73,9 +81,16 @@ class PortableUpdater:
         for item in new_files.rglob('*'):
             if item.is_file():
                 rel_path = item.relative_to(new_files)
+                # Don't overwrite config
+                if rel_path.name == 'config.json':
+                    continue
                 dest = self.app_dir / rel_path
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(item, dest)
+
+        # Restore config
+        if config_backup:
+            config_path.write_bytes(config_backup)
 
     def _restore_backup(self) -> None:
         backup_dir = self.temp_dir / 'backup'

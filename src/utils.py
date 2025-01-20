@@ -2,6 +2,7 @@ import os
 import sys
 import logging
 from pathlib import Path
+import json
 
 APP_NAME = "WebDesk"
 APP_VERSION = "1.0.0"
@@ -54,3 +55,33 @@ def ensure_single_instance():
         return True
     except socket.error:
         return False
+
+class Config:
+    def __init__(self):
+        self.config_path = Path(getattr(sys, '_MEIPASS', Path.cwd())) / 'config.json'
+        self.load()
+
+    def load(self):
+        """Load configuration"""
+        if self.config_path.exists():
+            with open(self.config_path) as f:
+                self.data = json.load(f)
+        else:
+            self.data = {
+                'url': 'about:blank',
+                'autostart': True,
+                'check_updates': True
+            }
+            self.save()
+
+    def save(self):
+        """Save configuration"""
+        with open(self.config_path, 'w') as f:
+            json.dump(self.data, f, indent=2)
+
+    def get(self, key, default=None):
+        return self.data.get(key, default)
+
+    def set(self, key, value):
+        self.data[key] = value
+        self.save()
