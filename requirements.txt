@@ -1,0 +1,8 @@
+PyQt6-sip==13.9.1
+PyQt6>=6.6.1
+PyQt6-WebEngine>=6.6.0
+PyQt6-Qt6==6.6.1
+requests>=2.31.0
+beautifulsoup4==4.12.2
+validators==0.22.0
+pywin32==306

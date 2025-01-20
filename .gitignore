@@ -1,0 +1,32 @@
+# Completely exclude build artifacts
+/dist/
+/build/
+/releases/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.spec
+*.exe
+*.pkg
+*.dll
+
+# Development
+.env
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Temporary
+temp/
+*.tmp
+*.bak
+*.log
+
+# Explicitly include Resources
+!Resources/app.ico
