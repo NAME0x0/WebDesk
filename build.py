@@ -6,23 +6,25 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('builder')
 
-def build_app():
-    """Build the portable application"""
+def build():
+    """Build portable executable"""
     try:
         # Ensure resources exist
         if not Path('Resources/app.ico').exists():
             logger.error("Missing app.ico in Resources folder")
             return False
 
-        # Build executable
         subprocess.run([
             'pyinstaller',
+            '--noconfirm',
             '--onefile',
             '--noconsole',
             '--add-data', 'Resources/*;Resources',
+            '--hidden-import', 'win32gui',
+            '--hidden-import', 'win32con',
             '--name', 'WebDesk',
             '--icon', 'Resources/app.ico',
-            'src/main.py'
+            'src/app.py'
         ], check=True)
 
         # Create version file
@@ -38,5 +40,5 @@ def build_app():
         return False
 
 if __name__ == '__main__':
-    sys.exit(0 if build_app() else 1)
+    sys.exit(0 if build() else 1)
 

@@ -1,42 +1,42 @@
-# WebDesk - Live Web Wallpaper
+# WebDesk 🖥️
+
+A lightweight desktop application that lets you set web pages as your Windows wallpaper.
 
 ![WebDesk Preview](docs/preview.png)
 
-## 🚀 Quick Start (No Installation Required)
+## 🚀 Quick Start
 
-1. Download `WebDesk.exe` from the [Latest Release](../../releases/latest)
-2. Create a folder where you want to keep WebDesk
-3. Move `WebDesk.exe` to that folder
-4. Double-click `WebDesk.exe` to start
-
-That's it! No installation needed.
+1. **Download**: Get the latest version from the [Releases](../../releases) page
+2. **Run**: Just double-click `WebDesk.exe` - no installation needed!
+3. **Use**: Right-click the tray icon to access settings and features
 
 ## ✨ Features
 
 - Set any website as your live wallpaper
 - Automatic updates
-- No Python required
-- Portable - runs from any folder
-- Preserves your settings
+- No installation required
+- Lightweight and fast
 - System tray controls
 
 ## 🤔 Common Questions
 
-### Do I need to install Python?
-No! Just download and run the exe file.
+### How do I use WebDesk?
+
+1. Download `WebDesk.exe`
+2. Run it
+3. Right-click the tray icon (near the clock)
+4. Choose your settings
+5. Enjoy your live wallpaper!
+
+### How do I update?
+
+WebDesk checks for updates automatically. When an update is available, it will download and apply it automatically.
 
 ### Where are my settings saved?
-All settings are saved in the same folder as WebDesk.exe.
 
-### How do updates work?
-WebDesk checks for updates automatically and updates itself while preserving your settings.
-
-### Can I move WebDesk to another folder?
-Yes! Just move the entire folder - all your settings will move with it.
+All settings are saved in the same folder as the application - making it truly portable!
 
 ## 🛠️ For Developers
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup instructions.
 
 ### Building from Source
 
