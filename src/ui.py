@@ -1,9 +1,11 @@
 from PyQt6.QtWidgets import (QMainWindow, QSystemTrayIcon, QMenu, QDialog,
                            QVBoxLayout, QPushButton, QCheckBox, QLineEdit,
                            QLabel, QFileDialog, QTabWidget, QWidget,
-                           QMessageBox, QProgressDialog, QInputDialog)
+                           QMessageBox, QProgressDialog, QInputDialog,
+                           QApplication)
 from PyQt6.QtCore import Qt, QUrl, QDir, pyqtSignal
 from PyQt6.QtWebEngineWidgets import QWebEngineView
+from pathlib import Path
 from PyQt6.QtWebEngineCore import QWebEngineProfile, QWebEngineSettings, QWebEnginePage
 from PyQt6.QtGui import QIcon, QAction
 from .managers import SettingsManager, WallpaperHelper, WebsiteManager
