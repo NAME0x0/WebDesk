@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from pathlib import Path
 import sys
 import win32gui
@@ -7,7 +6,7 @@ from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QInputDialog
 from PyQt6.QtCore import Qt, QUrl
 from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtWebEngineWidgets import QWebEngineView
-from .config import Config, Release
+from config import Config, Release
 
 class WebDesk:
     def __init__(self):

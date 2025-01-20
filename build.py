@@ -10,43 +10,69 @@ logger = logging.getLogger('builder')
 def build():
     """Build portable executable"""
     try:
-        # Get absolute paths
         project_root = Path(__file__).resolve().parent
-        src_path = project_root / 'src' / 'app.py'
         
-        logger.info(f"Building from: {src_path}")
+        # Clean previous builds
+        for path in ['build', 'dist']:
+            shutil.rmtree(project_root / path, ignore_errors=True)
+
+        # Create spec file
+        spec_content = '''# -*- mode: python ; coding: utf-8 -*-
+
+block_cipher = None
+
+a = Analysis(
+    ['src/app.py'],
+    pathex=[],
+    binaries=[],
+    datas=[('Resources/*', 'Resources')],
+    hiddenimports=['win32gui', 'win32con', 'PyQt6.QtWebEngineWidgets'],
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=[],
+    win_no_prefer_redirects=False,
+    win_private_assemblies=False,
+    cipher=block_cipher,
+    noarchive=False,
+)
+pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+
+exe = EXE(
+    pyz,
+    a.scripts,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    [],
+    name='WebDesk',
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
+    console=False,
+    disable_windowed_traceback=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+    icon='Resources/app.ico'
+)
+'''
         
-        # Verify source exists
-        if not src_path.exists():
-            logger.error(f"Source file not found: {src_path}")
-            return False
+        with open('WebDesk.spec', 'w') as f:
+            f.write(spec_content)
 
         # Run PyInstaller
-        result = subprocess.run([
+        subprocess.run([
             sys.executable, '-m', 'pyinstaller',
-            '--noconfirm',
-            '--onefile',
-            '--noconsole',
-            '--add-data', f'Resources/*;Resources',
-            '--hidden-import', 'win32gui',
-            '--hidden-import', 'win32con',
-            '--name', 'WebDesk',
-            '--icon', 'Resources/app.ico',
-            str(src_path)
-        ], check=True, capture_output=True, text=True)
-        
-        logger.info(result.stdout)
-        
-        if result.stderr:
-            logger.error(result.stderr)
-        
-        # Add version information
-        version_file = project_root / 'dist' / 'version.txt'
-        version_file.write_text('1.0.0')
-        
-        logger.info(f"Build successful: {project_root / 'dist' / 'WebDesk.exe'}")
+            'WebDesk.spec'
+        ], check=True)
+
+        logger.info("Build completed successfully!")
         return True
-        
+
     except Exception as e:
         logger.error(f"Build failed: {str(e)}")
         return False
