@@ -1,6 +1,7 @@
-import sys
 import subprocess
+import sys
 from pathlib import Path
+import shutil
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -8,12 +9,18 @@ logger = logging.getLogger('builder')
 
 def build():
     """Build portable executable"""
+    project_root = Path(__file__).parent
+    
+    # Clean previous builds
+    for path in ['build', 'dist']:
+        shutil.rmtree(project_root / path, ignore_errors=True)
+    
+    # Verify resources
+    if not (project_root / 'Resources' / 'app.ico').exists():
+        logger.error("Missing app.ico in Resources folder")
+        return False
+    
     try:
-        # Ensure resources exist
-        if not Path('Resources/app.ico').exists():
-            logger.error("Missing app.ico in Resources folder")
-            return False
-
         subprocess.run([
             'pyinstaller',
             '--noconfirm',
@@ -26,15 +33,14 @@ def build():
             '--icon', 'Resources/app.ico',
             'src/app.py'
         ], check=True)
-
-        # Create version file
-        with open('dist/version.txt', 'w') as f:
-            f.write('1.0.0')
-
+        
+        # Add version information
+        (project_root / 'dist' / 'version.txt').write_text('1.0.0')
+        
         logger.info("Build completed successfully!")
-        logger.info(f"Output: {Path('dist/WebDesk.exe').absolute()}")
+        logger.info(f"Output: {project_root / 'dist' / 'WebDesk.exe'}")
         return True
-
+        
     except Exception as e:
         logger.error(f"Build failed: {e}")
         return False

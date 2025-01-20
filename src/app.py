@@ -12,61 +12,76 @@ from .config import Config, Release
 class WebDesk:
     def __init__(self):
         self.config = Config()
-        self.web_view = QWebEngineView()
-        self.setup_ui()
-        self.set_as_wallpaper()
-        self.load_url(self.config.url)
+        self.web_view = self._create_web_view()
+        self.tray = self._create_tray()
+        self.setup_wallpaper()
+        self.load_last_url()
 
-    def setup_ui(self):
-        """Initialize UI components"""
-        self.tray = QSystemTrayIcon()
-        self.tray.setIcon(QIcon(str(Path("Resources/app.ico"))))
+    def _create_web_view(self):
+        view = QWebEngineView()
+        view.setAttribute(Qt.WidgetAttribute.WA_ShowWithoutActivating)
+        view.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+        return view
+
+    def _create_tray(self):
+        tray = QSystemTrayIcon()
+        tray.setIcon(QIcon(str(self.config.get_resource_path('app.ico'))))
         
         menu = QMenu()
         actions = {
-            "Change URL": self.change_url,
+            "Set Website": self.change_url,
             "Check Update": self.check_update,
+            "Settings": self.show_settings,
             "Exit": QApplication.quit
         }
         
         for text, handler in actions.items():
-            action = QAction(text)
-            action.triggered.connect(handler)
-            menu.addAction(action)
-            
-        self.tray.setContextMenu(menu)
-        self.tray.show()
+            menu.addAction(QAction(text, triggered=handler))
+        
+        tray.setContextMenu(menu)
+        tray.show()
+        return tray
 
-    def set_as_wallpaper(self):
-        """Set web view as wallpaper"""
+    def setup_wallpaper(self):
         hwnd = int(self.web_view.winId())
         progman = win32gui.FindWindow("Progman", None)
         win32gui.SetParent(hwnd, progman)
+        
         style = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
         win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE, 
                              style | win32con.WS_EX_NOACTIVATE)
+        
+        self.web_view.showMaximized()
+
+    def load_last_url(self):
+        url = self.config.get('url', 'about:blank')
+        self.load_url(url)
 
     def load_url(self, url: str):
-        """Load URL in web view"""
         if not url.startswith(('http://', 'https://')):
             url = f'https://{url}'
         self.web_view.setUrl(QUrl(url))
         self.config.set('url', url)
 
     def change_url(self):
-        """Change wallpaper URL"""
-        if url := QInputDialog.getText(None, "Change URL", "Enter website URL:")[0]:
+        if url := QInputDialog.getText(None, "Set Website", "Enter URL:")[0]:
             self.load_url(url)
 
     def check_update(self):
-        """Check and apply updates"""
-        if release := self.config.check_update():
-            self.config.update(release)
+        if update := self.config.check_update():
+            self.config.apply_update(update)
+
+    def show_settings(self):
+        # TODO: Implement settings dialog
+        pass
 
 def main():
-    """Application entry point"""
-    app = QApplication(sys.argv)
+    app = QApplication([])
+    app.setQuitOnLastWindowClosed(False)
     app.setAttribute(Qt.ApplicationAttribute.AA_EnableHighDpiScaling)
     
     webdesk = WebDesk()
     return app.exec()
+
+if __name__ == '__main__':
+    main()
