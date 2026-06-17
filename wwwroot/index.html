@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WebDesk</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="logo.svg" alt="WebDesk">
+      <span>WebDesk</span>
+    </div>
+    <nav id="nav">
+      <a data-route="home" class="active">Home</a>
+      <a data-route="discover">Discover</a>
+      <a data-route="browser">Browser</a>
+      <a data-route="library">Library</a>
+      <a data-route="settings">Settings</a>
+    </nav>
+    <div class="side-foot">
+      <button id="pauseBtn" class="ghost">Pause</button>
+      <span id="ver" class="ver"></span>
+    </div>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <div id="status" class="status"></div>
+      <select id="monitorSel" class="monitor-sel" title="Apply to"></select>
+      <div class="url-apply">
+        <input id="urlInput" type="text" spellcheck="false"
+               placeholder="Paste any URL to set as wallpaper…">
+        <button id="urlBtn">Apply</button>
+      </div>
+    </header>
+    <section id="view" class="view"></section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="bridge.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

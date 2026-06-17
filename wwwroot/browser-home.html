@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WebDesk Browser</title>
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      margin: 0; min-height: 100vh; background: #0d0e12; color: #e7e9f0;
+      font: 15px/1.5 "Segoe UI", system-ui, sans-serif;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; padding: 40px;
+    }
+    h1 { font-size: 22px; margin: 0; font-weight: 700; }
+    p { color: #8b90a0; margin: -16px 0 0; }
+    .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; width: min(900px, 100%); }
+    a.tile {
+      display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: #e7e9f0;
+      background: #15161c; border: 1px solid #262833; border-radius: 14px; padding: 20px;
+      transition: transform .15s, border-color .15s;
+    }
+    a.tile:hover { transform: translateY(-3px); border-color: #6c8cff; }
+    .tile b { font-size: 16px; }
+    .tile span { color: #8b90a0; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <h1>Browse for wallpapers</h1>
+  <p>Open a site, find something you like, then use the capture bar above.</p>
+  <div class="tiles">
+    <a class="tile" href="https://moewalls.com/"><b>Moewalls</b><span>Anime live wallpapers</span></a>
+    <a class="tile" href="https://motionbgs.com/"><b>MotionBGs</b><span>Live motion backgrounds</span></a>
+    <a class="tile" href="https://mylivewallpapers.com/"><b>MyLiveWallpapers</b><span>4K live wallpapers</span></a>
+    <a class="tile" href="https://4kwallpapers.com/"><b>4KWallpapers</b><span>High-res still images</span></a>
+    <a class="tile" href="https://unsplash.com/wallpapers"><b>Unsplash</b><span>Free photography</span></a>
+    <a class="tile" href="https://www.pinterest.com/"><b>Pinterest</b><span>Boards &amp; inspiration</span></a>
+    <a class="tile" href="https://x.com/"><b>X</b><span>Feeds &amp; clips</span></a>
+  </div>
+</body>
+</html>

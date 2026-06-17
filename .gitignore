@@ -2,14 +2,13 @@
 /dist/
 /build/
 /releases/
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.spec
+/publish/
+[Bb]in/
+[Oo]bj/
 *.exe
 *.pkg
 *.dll
+config.json
 
 # Development
 .env

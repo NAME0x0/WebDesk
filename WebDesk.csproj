@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyName>WebDesk</AssemblyName>
+    <RootNamespace>WebDesk</RootNamespace>
+    <ApplicationIcon>Resources/app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Version>2.0.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
+    <!-- Single-file publish settings (used by `dotnet publish`). -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <PublishSingleFile>false</PublishSingleFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4022.49" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Embedded so the tray/dialog icon works in dev and single-file publish. -->
+    <EmbeddedResource Include="Resources/app.ico" />
+    <!-- SPA assets (flat) — extracted at runtime and served via a virtual host. -->
+    <EmbeddedResource Include="wwwroot/*" />
+    <!-- Offline fallback for the Discover catalog. -->
+    <EmbeddedResource Include="catalog/catalog.json" />
+  </ItemGroup>
+
+</Project>

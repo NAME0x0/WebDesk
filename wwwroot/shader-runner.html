@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}canvas{display:block;width:100vw;height:100vh}</style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <script>
+  (function () {
+    const params = new URLSearchParams(location.search);
+    const fpsCap = parseInt(params.get('fps') || '0', 10) || 0;     // 0 = unlimited
+    const audioOn = params.get('audio') === '1';
+
+    const canvas = document.getElementById('c');
+    const gl = canvas.getContext('webgl');
+    const audio = { bass: 0, mid: 0, treble: 0, level: 0 };
+
+    const VERT = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+    const HEADER =
+      'precision highp float;' +
+      'uniform vec2 iResolution;uniform float iTime;' +
+      'uniform float iBass;uniform float iMid;uniform float iTreble;uniform float iLevel;';
+    const FOOTER =
+      'void main(){vec4 c;mainImage(c, gl_FragCoord.xy);gl_FragColor=vec4(c.rgb,1.);}';
+
+    let program = null, loc = {}, start = performance.now(), last = 0, raf = 0;
+
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.floor(innerWidth * dpr);
+      canvas.height = Math.floor(innerHeight * dpr);
+      gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Fullscreen triangle.
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+
+    function compile(type, src) {
+      const sh = gl.createShader(type);
+      gl.shaderSource(sh, src);
+      gl.compileShader(sh);
+      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+        console.error(gl.getShaderInfoLog(sh));
+        return null;
+      }
+      return sh;
+    }
+
+    window.setShader = function (fragMain) {
+      const vs = compile(gl.VERTEX_SHADER, VERT);
+      const fs = compile(gl.FRAGMENT_SHADER, HEADER + fragMain + FOOTER);
+      if (!vs || !fs) return;
+
+      const prog = gl.createProgram();
+      gl.attachShader(prog, vs);
+      gl.attachShader(prog, fs);
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { console.error(gl.getProgramInfoLog(prog)); return; }
+
+      program = prog;
+      gl.useProgram(program);
+      const p = gl.getAttribLocation(program, 'p');
+      gl.enableVertexAttribArray(p);
+      gl.vertexAttribPointer(p, 2, gl.FLOAT, false, 0, 0);
+
+      loc = {
+        res: gl.getUniformLocation(program, 'iResolution'),
+        time: gl.getUniformLocation(program, 'iTime'),
+        bass: gl.getUniformLocation(program, 'iBass'),
+        mid: gl.getUniformLocation(program, 'iMid'),
+        treble: gl.getUniformLocation(program, 'iTreble'),
+        level: gl.getUniformLocation(program, 'iLevel'),
+      };
+      start = performance.now();
+      if (!raf) loop();
+    };
+
+    function loop() {
+      raf = requestAnimationFrame(loop);
+      if (!program) return;
+      const now = performance.now();
+      if (fpsCap && now - last < 1000 / fpsCap) return; // throttle to the cap
+      last = now;
+
+      gl.uniform2f(loc.res, canvas.width, canvas.height);
+      gl.uniform1f(loc.time, (now - start) / 1000);
+      gl.uniform1f(loc.bass, audio.bass);
+      gl.uniform1f(loc.mid, audio.mid);
+      gl.uniform1f(loc.treble, audio.treble);
+      gl.uniform1f(loc.level, audio.level);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
+
+    // Audio levels pushed from the host (C#).
+    if (audioOn && window.chrome && window.chrome.webview) {
+      window.chrome.webview.addEventListener('message', (e) => {
+        try {
+          const d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+          if (d && typeof d.level === 'number') {
+            audio.bass = d.bass; audio.mid = d.mid; audio.treble = d.treble; audio.level = d.level;
+          }
+        } catch (_) {}
+      });
+    }
+  })();
+  </script>
+</body>
+</html>
