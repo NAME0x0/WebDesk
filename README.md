@@ -1,130 +1,134 @@
 # WebDesk 🖥️
 
-A lightweight desktop application that lets you set web pages as your Windows wallpaper.
+**Turn any website, video, image, or WebGL shader into a live Windows wallpaper.**
+A free, open-source alternative to Wallpaper Engine and Lively — built on C#/.NET 8 + WebView2.
 
-![WebDesk Preview](docs/preview.png)
+[![CI](https://github.com/NAME0x0/WebDesk/actions/workflows/ci.yml/badge.svg)](https://github.com/NAME0x0/WebDesk/actions/workflows/ci.yml)
+[![Release](https://github.com/NAME0x0/WebDesk/actions/workflows/release.yml/badge.svg)](https://github.com/NAME0x0/WebDesk/actions/workflows/release.yml)
+[![Latest release](https://img.shields.io/github/v/release/NAME0x0/WebDesk?sort=semver)](https://github.com/NAME0x0/WebDesk/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/NAME0x0/WebDesk/total)](https://github.com/NAME0x0/WebDesk/releases)
+![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)
+![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-0078D6)
+[![License](https://img.shields.io/github/license/NAME0x0/WebDesk)](LICENSE)
 
-## 🚀 Quick Start
+---
 
-1. **Download**: Get the latest version from the [Releases](../../releases) page
-2. **Run**: Just double-click `WebDesk.exe` - no installation needed!
-3. **Use**: Right-click the tray icon to access settings and features
+## 🚀 Quick start
+
+1. **Download** `WebDesk.exe` from the [latest release](https://github.com/NAME0x0/WebDesk/releases/latest).
+2. **Run** it — no installer, fully portable, self-contained (no .NET install required).
+3. **Pick a wallpaper** from Discover, browse the web for one, or paste a URL.
+
+> Closing the window hides WebDesk to the tray. Right-click the tray icon → **Exit** to quit.
 
 ## ✨ Features
 
-- **Any wallpaper type** — live websites, local HTML, video (`.mp4`/`.webm`), images, and **WebGL shaders**
-- **Audio-reactive shaders** — shader uniforms driven by your system audio (WASAPI loopback)
-- **Per-monitor wallpapers** — set one wallpaper for all displays, or a different one per monitor
-- **Discover** — browse a curated, community-updatable catalog, and **submit your own** (no account, no server)
-- **Library** — save & star wallpapers, or point WebDesk at a local folder
-- **Performance** — auto-pause on fullscreen apps / on battery, plus a shader frame-rate cap
-- **Settings + tray** — run at startup (to tray), mute audio, auto-update, pause/resume
-- No installation required · renders behind your desktop icons · lightweight
+- **Any wallpaper type** — live websites, local HTML, video (`.mp4`/`.webm`), images, and **WebGL shaders**.
+- **In-app browser + capture** — browse Moewalls, MotionBGs, MyLiveWallpapers, 4KWallpapers, Unsplash, Pinterest, X, anywhere — then "Set image/video" or "Set live page" as your wallpaper. Works on any site, no scraping.
+- **Discover** — a curated, community-updatable catalog plus the **Wallhaven** provider (keyless search). Submit your own wallpapers straight from the app.
+- **Audio-reactive shaders** — shader uniforms (`iBass`/`iMid`/`iTreble`/`iLevel`) driven by your system audio via WASAPI loopback.
+- **Per-monitor wallpapers** — one wallpaper everywhere, or a different one per display. Renders *behind* desktop icons (WorkerW).
+- **Library & playlists** — save/star wallpapers, point at a local folder, and rotate a playlist on a timer (with shuffle).
+- **Performance** — auto-pause on fullscreen apps or on battery, plus a shader frame-rate cap.
+- **Global hotkeys** — `Ctrl`+`Alt`+`→` next · `Ctrl`+`Alt`+`P` pause/resume · `Ctrl`+`Alt`+`M` mute.
+- **Polished UI** — light/dark theme with an accent color, tray recents, run-at-startup (to tray), and an in-app self-updater.
 
-## 🤔 Common Questions
+## ⌨️ Usage
 
-### How do I use WebDesk?
+| Surface | What it does |
+|---|---|
+| **Home** | Current wallpaper + featured picks |
+| **Discover** | Catalog + Wallhaven search, filter by tag, Set / Save / ★ / ＋ playlist |
+| **Browser** | Real in-app browser with the capture bar |
+| **Library** | Saved & Starred · Local Folder · Playlist (rotation + shuffle) |
+| **Settings** | Theme/accent, performance, startup, mute, library folder, updates |
+| **Tray** | Open · Pause/Resume · Recent · Settings · Exit |
 
-1. Download `WebDesk.exe`
-2. Run it
-3. Right-click the tray icon (near the clock)
-4. Choose your settings
-5. Enjoy your live wallpaper!
+**Command-line flags** (also handy for shortcuts): `--tray` (start hidden), `--page=<home|discover|browser|library|settings>` (deep-link, sub-routes like `discover/wallhaven/nature`), `--open=<url>` (open in the browser pane), `--grab=<media|page>` (open a URL and set it as wallpaper headlessly).
 
-### How do I update?
+## ❓ FAQ
 
-WebDesk checks for updates automatically. When an update is available, it will download and apply it automatically.
+**Where is my data?** Settings and library live in `%APPDATA%\WebDesk`; caches in `%LOCALAPPDATA%\WebDesk`. The exe stays portable — the only system change is the optional "run at startup" registry entry.
 
-### Where are my settings saved?
+**Do I need anything installed?** No. The build is self-contained. The Microsoft Edge **WebView2 runtime** is preinstalled on Windows 11 and most Windows 10 machines; if missing, install the Evergreen Bootstrapper from Microsoft.
 
-Settings and your library live in `%APPDATA%\WebDesk`; caches in `%LOCALAPPDATA%\WebDesk`. The executable itself stays portable — no installer, no registry clutter (aside from the optional "run at startup" entry).
+**How do I add wallpapers to Discover?** Open the in-app **Submit** form (Discover → "+ Submit a wallpaper"), or send a PR adding an entry to [`catalog/catalog.json`](catalog/catalog.json) (`id`, `title`, `type`, `source`, optional `thumbnail`/`tags`/`author`/`audio`).
 
-### How do I add wallpapers to Discover?
+## 🛠️ Build from source
 
-Discover reads [`catalog/catalog.json`](catalog/catalog.json) from this repo. Open a pull request adding an entry (`id`, `title`, `type`, `source`, optional `thumbnail`/`tags`/`author`) and it shows up for everyone.
+Requires the [.NET 8 SDK](https://dotnet.microsoft.com/download) (or newer) on Windows.
 
-## 🛠️ For Developers
+```bash
+# Run locally
+dotnet run --project WebDesk.csproj
 
-WebDesk is a C# / .NET 8 (WinForms) app that renders a web page as the desktop
-wallpaper using the Microsoft Edge **WebView2** runtime.
+# Build a portable, self-contained single-file exe -> publish/WebDesk.exe
+dotnet publish WebDesk.csproj -c Release -r win-x64 --self-contained true \
+  -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
 
-### Building from Source
+# Regenerate the icon from the logo (optional; needs Python + Pillow)
+python tools/make_icon.py
+```
 
-1. Install the [.NET 8 SDK](https://dotnet.microsoft.com/download) (or newer).
-2. Clone this repository.
-3. Run it locally:
-   ```bash
-   dotnet run --project WebDesk.csproj
-   ```
-4. Build a portable, self-contained single-file `WebDesk.exe` (no .NET install
-   needed on the target machine):
-   ```bash
-   dotnet publish WebDesk.csproj -c Release -r win-x64 --self-contained true \
-     -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
-   ```
-   The exe lands in `publish/WebDesk.exe`.
+## 🧩 Architecture
 
-> The WebView2 **runtime** is preinstalled on Windows 11 and most Windows 10
-> machines. If missing, grab the Evergreen Bootstrapper from Microsoft.
+Three WebView2 surfaces, one rendering path. A URL navigates directly; local HTML loads via a virtual-host folder mapping; video/image are wrapped in a generated fullscreen HTML shell; shaders run in a WebGL runner. No separate media engine.
 
-### Project Structure
 ```
 WebDesk/
-├── WebDesk.csproj          # Project + WebView2 package reference
-├── app.manifest            # Per-monitor DPI awareness + Win10/11 compat
-├── wwwroot/                # The management UI (HTML/CSS/JS SPA), embedded
-│   ├── index.html · styles.css · app.js · bridge.js · logo.svg
-├── catalog/catalog.json    # Discover catalog (community-editable)
-├── tools/make_icon.py      # Regenerates Resources/app.ico
+├── WebDesk.csproj            # Project + WebView2 / NAudio package refs
+├── app.manifest              # Per-monitor DPI awareness + Win10/11 compat
+├── catalog/catalog.json      # Discover catalog (community-editable)
+├── tools/make_icon.py        # Regenerates Resources/app.ico from logo.svg
+├── wwwroot/                   # Embedded management UI (SPA), served via virtual host
+│   ├── index.html · styles.css · app.js · bridge.js
+│   ├── browser-home.html      # Browser start page (site tiles)
+│   ├── shader-runner.html     # WebGL shader host (audio uniforms, FPS cap)
+│   └── logo.svg
 └── src/
-    ├── Program.cs          # Entry point
-    ├── WebDeskContext.cs   # Services + tray + windows, wired together
-    ├── MainWindow.cs       # App shell: WebView2 hosting the SPA
-    ├── WallpaperForm.cs    # Wallpaper renderer, reparented under the desktop
-    ├── Bridge.cs           # JSON-RPC bridge (SPA ⇄ C#)
-    ├── WallpaperController.cs · SettingsStore.cs · LibraryStore.cs
-    ├── CatalogService.cs · LocalLibraryService.cs · StartupRegistration.cs
-    ├── Updater.cs · AssetExtractor.cs · AppPaths.cs · AppInfo.cs
-    ├── Models.cs · NativeMethods.cs · IconLoader.cs
+    ├── Program.cs · WebDeskContext.cs        # Entry + app root (services/tray/windows)
+    ├── MainWindow.cs                          # App shell + in-app browser pane
+    ├── WallpaperSurface.cs · DesktopHost.cs   # Per-monitor renderer, WorkerW reparent
+    ├── WallpaperController.cs                 # Apply / pause / rotate / audio routing
+    ├── Bridge.cs                              # JSON-RPC bridge (SPA ⇄ C#)
+    ├── CatalogService.cs · ProviderService.cs # Discover catalog + Wallhaven
+    ├── LibraryStore.cs · LocalLibraryService.cs
+    ├── PerfGuard.cs · RotationService.cs · HotkeyService.cs · AudioCapture.cs
+    ├── SettingsStore.cs · Models.cs · AppPaths.cs · AppInfo.cs
+    ├── AssetExtractor.cs · IconLoader.cs · StartupRegistration.cs
+    ├── Updater.cs · NativeMethods.cs
 ```
 
-**How rendering works:** everything is WebView2. A URL navigates directly; local HTML loads via a virtual-host folder mapping; video/image are wrapped in a generated fullscreen HTML shell. One rendering path, no separate media engine.
+## 🔄 CI/CD
+
+Self-healing GitHub Actions:
+
+- **`ci.yml`** — builds and validates on every push/PR. NuGet cached, restore retried, stale runs auto-cancelled.
+- **`release.yml`** — on a `v*` tag: publishes the single-file exe, writes a SHA-256 checksum, and creates a GitHub Release with generated notes.
+- **`auto-rerun.yml`** — re-runs failed CI/Release jobs **once** automatically, so transient (network/NuGet/runner) failures recover without intervention.
+- **`dependabot.yml`** — weekly updates for GitHub Actions and NuGet packages.
+
+Cut a release:
+
+```bash
+git tag -a vX.Y.Z -m "WebDesk X.Y.Z"
+git push origin vX.Y.Z
+```
 
 ## 🤝 Contributing
 
-We welcome contributions! Here's how you can help:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+Fork → branch → PR. Adding wallpapers? Just edit [`catalog/catalog.json`](catalog/catalog.json). Bugs/ideas? [Open an issue](https://github.com/NAME0x0/WebDesk/issues).
 
 ## 🔍 Troubleshooting
 
-### Common Issues
-
-1. **Wallpaper not showing**
-   - Make sure WebView2 Runtime is installed
-   - Check if your HTML file path is correct
-   - Verify the HTML file works in a browser
-
-2. **Black screen**
-   - Check if your graphics drivers are updated
-   - Try running WebDesk as administrator
-
-3. **Won't start with Windows**
-   - Check Windows startup settings
-   - Try reinstalling the application
-
-### Getting Help
-
-- [Open an Issue](https://github.com/your-username/WebDesk/issues)
+- **Wallpaper not showing / black screen** — ensure the WebView2 runtime is installed and graphics drivers are current; try Pause→Resume from the tray.
+- **Video won't autoplay with sound** — disable "Mute audio" in Settings (muted is the default).
+- **Captured video doesn't play** — some sites stream via `blob:` URLs; WebDesk falls back to setting the live page instead.
 
 ## 📜 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT — see [LICENSE](LICENSE).
 
 ## 🙏 Acknowledgments
 
-- [Microsoft WebView2](https://docs.microsoft.com/microsoft-edge/webview2/)
-- [.NET Foundation](https://dotnetfoundation.org/)
+[Microsoft WebView2](https://learn.microsoft.com/microsoft-edge/webview2/) · [NAudio](https://github.com/naudio/NAudio) · [Wallhaven API](https://wallhaven.cc/help/api) · [.NET](https://dotnet.microsoft.com/)

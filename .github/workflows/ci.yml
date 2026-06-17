@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Cancel superseded runs on the same ref so the latest commit always wins.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build & validate
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Restore (with retry)
+        shell: bash
+        run: |
+          for i in 1 2 3; do
+            dotnet restore && exit 0
+            echo "::warning::dotnet restore attempt $i failed; retrying"
+            sleep 10
+          done
+          exit 1
+
+      - name: Build
+        run: dotnet build WebDesk.csproj -c Release --no-restore
+
+      - name: Format check (advisory)
+        continue-on-error: true
+        run: dotnet format WebDesk.csproj --verify-no-changes

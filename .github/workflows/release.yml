@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+# Never cancel a release mid-flight.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Publish & release
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Restore (with retry)
+        shell: bash
+        run: |
+          for i in 1 2 3; do
+            dotnet restore && exit 0
+            echo "::warning::dotnet restore attempt $i failed; retrying"
+            sleep 10
+          done
+          exit 1
+
+      - name: Publish single-file exe (with retry)
+        shell: bash
+        run: |
+          for i in 1 2 3; do
+            dotnet publish WebDesk.csproj -c Release -r win-x64 --self-contained true \
+              -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true \
+              --no-restore -o publish && exit 0
+            echo "::warning::dotnet publish attempt $i failed; retrying"
+            sleep 10
+          done
+          exit 1
+
+      - name: Verify artifact & write checksum
+        shell: pwsh
+        run: |
+          if (-not (Test-Path publish/WebDesk.exe)) { throw "publish/WebDesk.exe was not produced" }
+          $hash = (Get-FileHash publish/WebDesk.exe -Algorithm SHA256).Hash.ToLower()
+          "$hash  WebDesk.exe" | Out-File -Encoding ascii publish/WebDesk.exe.sha256
+          Write-Host "SHA256: $hash"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: WebDesk-Portable
+          path: |
+            publish/WebDesk.exe
+            publish/WebDesk.exe.sha256
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            publish/WebDesk.exe
+            publish/WebDesk.exe.sha256
+          generate_release_notes: true
+          fail_on_unmatched_files: true

@@ -1,0 +1,19 @@
+version: 2
+updates:
+  # Keep GitHub Actions pinned versions fresh and patched.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+    labels: [dependencies, ci]
+
+  # Keep NuGet packages (WebView2, NAudio) patched.
+  - package-ecosystem: nuget
+    directory: "/"
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: deps
+    labels: [dependencies]
