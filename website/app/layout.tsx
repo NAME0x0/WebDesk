@@ -4,6 +4,7 @@ import "./globals.css";
 import { AccentProvider } from "@/components/accent";
 import { Nav } from "@/components/nav";
 import { SmoothScroll } from "@/components/smooth-scroll";
+import { Analytics } from "@vercel/analytics/next";
 import { site } from "@/lib/site";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Nav />
           {children}
         </AccentProvider>
+        <Analytics />
       </body>
     </html>
   );

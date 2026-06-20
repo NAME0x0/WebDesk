@@ -3,7 +3,7 @@ export const site = {
   tagline: "Your desktop, alive.",
   description:
     "Turn any website, video, image, or WebGL shader into a live Windows wallpaper. Free, open-source, and built on WebView2 — a free alternative to Wallpaper Engine and Lively.",
-  url: "https://webdesk.vercel.app",
+  url: "https://webdesk-live.vercel.app",
   repo: "NAME0x0/WebDesk",
   repoUrl: "https://github.com/NAME0x0/WebDesk",
   releasesUrl: "https://github.com/NAME0x0/WebDesk/releases/latest",
