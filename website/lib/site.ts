@@ -7,6 +7,8 @@ export const site = {
   repo: "NAME0x0/WebDesk",
   repoUrl: "https://github.com/NAME0x0/WebDesk",
   releasesUrl: "https://github.com/NAME0x0/WebDesk/releases/latest",
+  // GitHub redirects this to the latest release's asset — always current, no API needed.
+  downloadLatest: "https://github.com/NAME0x0/WebDesk/releases/latest/download/WebDesk.exe",
   issuesUrl: "https://github.com/NAME0x0/WebDesk/issues",
   catalogRaw:
     "https://raw.githubusercontent.com/NAME0x0/WebDesk/main/catalog/catalog.json",

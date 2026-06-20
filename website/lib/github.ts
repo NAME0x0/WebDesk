@@ -7,26 +7,33 @@ export type ReleaseInfo = {
   stars: number;
 };
 
+// If the API can't be reached, the download link still points at the latest
+// release (GitHub's redirect), and the label just reads "latest".
 const FALLBACK: ReleaseInfo = {
-  version: "v2.0.0",
-  downloadUrl: site.releasesUrl,
-  assetSize: "~164 MB",
+  version: "latest",
+  downloadUrl: site.downloadLatest,
+  assetSize: "",
   stars: 0,
 };
 
 function fmtBytes(n: number): string {
   if (!n) return "";
-  const mb = n / (1024 * 1024);
-  return `${Math.round(mb)} MB`;
+  return `${Math.round(n / (1024 * 1024))} MB`;
 }
 
-/** Latest release + star count, fetched at build time (revalidated hourly). */
+/**
+ * Latest release version + size + star count. The download link is always the
+ * "/releases/latest/download" redirect, so it stays current even if this fetch
+ * is rate-limited or the page is cached. Revalidated every 10 minutes (ISR).
+ */
 export async function getReleaseInfo(): Promise<ReleaseInfo> {
   try {
-    const opts = {
-      headers: { Accept: "application/vnd.github+json" },
-      next: { revalidate: 3600 },
-    };
+    const headers: Record<string, string> = { Accept: "application/vnd.github+json" };
+    // Optional: set GITHUB_TOKEN in Vercel to lift the unauthenticated rate limit.
+    const token = process.env.GITHUB_TOKEN;
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const opts = { headers, next: { revalidate: 600 } };
 
     const [relRes, repoRes] = await Promise.all([
       fetch(`https://api.github.com/repos/${site.repo}/releases/latest`, opts),
@@ -37,14 +44,12 @@ export async function getReleaseInfo(): Promise<ReleaseInfo> {
     const rel = await relRes.json();
     const repo = repoRes.ok ? await repoRes.json() : { stargazers_count: 0 };
 
-    const exe =
-      (rel.assets ?? []).find((a: { name: string }) => a.name.endsWith(".exe")) ??
-      (rel.assets ?? [])[0];
+    const exe = (rel.assets ?? []).find((a: { name: string }) => a.name.endsWith(".exe"));
 
     return {
-      version: rel.tag_name ?? FALLBACK.version,
-      downloadUrl: exe?.browser_download_url ?? site.releasesUrl,
-      assetSize: exe?.size ? fmtBytes(exe.size) : FALLBACK.assetSize,
+      version: rel.tag_name ?? "latest",
+      downloadUrl: site.downloadLatest,
+      assetSize: exe?.size ? fmtBytes(exe.size) : "",
       stars: repo.stargazers_count ?? 0,
     };
   } catch {

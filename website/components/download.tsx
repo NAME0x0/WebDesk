@@ -34,7 +34,7 @@ export function Download({
           </a>
         </div>
         <p className="mt-6 text-sm text-[var(--color-muted)]">
-          Windows 10 / 11 · {size} · SHA-256 verified ·{" "}
+          Windows 10 / 11 · {size ? `${size} · ` : ""}SHA-256 verified ·{" "}
           <a className="accent-text hover:underline" href={site.releasesUrl}>
             all releases
           </a>
