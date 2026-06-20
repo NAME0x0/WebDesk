@@ -72,6 +72,7 @@ internal sealed class Bridge
             monitors = Monitors(),
         },
         "getMonitors" => Monitors(),
+        "setMonitorDisabled" => SetMonitorDisabled(p),
         "getCatalog" => await _catalog.GetAsync(p.ValueKind == JsonValueKind.Object
             && p.TryGetProperty("refresh", out var r) && r.GetBoolean()),
         "getLibrary" => _library.All,
@@ -161,8 +162,22 @@ internal sealed class Bridge
     private static object Act(Action action) { action(); return new { ok = true }; }
 
     private object[] Monitors() => _controller.Surfaces
-        .Select(s => (object)new { id = s.DeviceName, label = s.Label, primary = s.IsPrimary })
+        .Select(s => (object)new
+        {
+            id = s.DeviceName,
+            label = s.Label,
+            primary = s.IsPrimary,
+            disabled = _settings.Value.DisabledMonitors.Contains(s.DeviceName),
+        })
         .ToArray();
+
+    private object SetMonitorDisabled(JsonElement p)
+    {
+        var id = p.GetProperty("id").GetString()!;
+        var disabled = p.TryGetProperty("disabled", out var d) && d.GetBoolean();
+        _controller.SetMonitorDisabled(id, disabled);
+        return new { ok = true, disabled };
+    }
 
     private object Apply(JsonElement p)
     {

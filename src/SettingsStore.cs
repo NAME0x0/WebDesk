@@ -28,6 +28,9 @@ internal sealed class AppSettings
 
     /// <summary>Per-monitor overrides, keyed by display device name.</summary>
     public Dictionary<string, Wallpaper> Monitors { get; set; } = new();
+
+    /// <summary>Displays left untouched (real desktop + icons stay visible).</summary>
+    public List<string> DisabledMonitors { get; set; } = new();
 }
 
 /// <summary>Loads/saves <see cref="AppSettings"/> as JSON.</summary>

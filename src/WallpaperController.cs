@@ -101,6 +101,22 @@ internal sealed class WallpaperController
     /// <summary>Re-render (e.g. after a mute-audio or FPS-cap change).</summary>
     public void Reapply() => EvaluateAll(force: true);
 
+    /// <summary>Leave a monitor untouched (or restore it).</summary>
+    public void SetMonitorDisabled(string deviceName, bool disabled)
+    {
+        var set = _settings.Value.DisabledMonitors;
+        if (disabled)
+        {
+            if (!set.Contains(deviceName)) set.Add(deviceName);
+        }
+        else
+        {
+            set.RemoveAll(d => d == deviceName);
+        }
+        _settings.Save();
+        EvaluateAll(force: true);
+    }
+
     private void EvaluateAll(bool force)
     {
         var s = _settings.Value;
@@ -108,6 +124,13 @@ internal sealed class WallpaperController
 
         foreach (var surface in _surfaces)
         {
+            // "Leave untouched" wins over everything: hide so the real desktop shows.
+            if (s.DisabledMonitors.Contains(surface.DeviceName))
+            {
+                surface.Disable();
+                continue;
+            }
+
             var wallpaper = s.Monitors.GetValueOrDefault(surface.DeviceName) ?? s.Current;
             if (active && wallpaper is not null)
                 surface.Render(wallpaper, s.MuteAudio, s.FpsCap, force);

@@ -46,6 +46,7 @@ internal sealed class WallpaperSurface : Form
     public string Label =>
         $"{(_screen.Primary ? "Primary" : "Display")} · {_screen.Bounds.Width}×{_screen.Bounds.Height}";
     public bool IsAudioShaderShowing => _shown && _isShader && _audio;
+    public bool Disabled { get; private set; }
 
     protected override bool ShowWithoutActivation => true;
 
@@ -102,7 +103,11 @@ internal sealed class WallpaperSurface : Form
             return;
         }
 
-        if (!force && _shown && _currentId == w.Id && _currentMute == mute) return;
+        if (!force && _shown && _currentId == w.Id && _currentMute == mute && Visible) return;
+
+        // Re-cover this monitor if it had been left untouched.
+        Disabled = false;
+        if (!Visible) Visible = true;
 
         _currentId = w.Id;
         _currentMute = mute;
@@ -136,8 +141,23 @@ internal sealed class WallpaperSurface : Form
         _currentId = null;
         _isShader = false;
         _audio = false;
+        Disabled = false;
+        if (!Visible) Visible = true;
         if (_webView.CoreWebView2 is { } core) core.Navigate("about:blank");
         else _pending = null;
+    }
+
+    /// <summary>Leave this monitor untouched — hide the surface so the real desktop shows.</summary>
+    public void Disable()
+    {
+        Disabled = true;
+        _shown = false;
+        _currentId = null;
+        _isShader = false;
+        _audio = false;
+        _pending = null;
+        Visible = false;
+        if (_webView.CoreWebView2 is { } core) core.Navigate("about:blank");
     }
 
     public void PushAudio(string json)

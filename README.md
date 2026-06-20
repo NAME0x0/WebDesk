@@ -30,7 +30,7 @@ A free, open-source alternative to Wallpaper Engine and Lively — built on C#/.
 - **In-app browser + capture** — browse Moewalls, MotionBGs, MyLiveWallpapers, 4KWallpapers, Unsplash, Pinterest, X, anywhere — then "Set image/video" or "Set live page" as your wallpaper. Works on any site, no scraping.
 - **Discover** — a curated, community-updatable catalog plus the **Wallhaven** provider (keyless search). Submit your own wallpapers straight from the app.
 - **Audio-reactive shaders** — shader uniforms (`iBass`/`iMid`/`iTreble`/`iLevel`) driven by your system audio via WASAPI loopback.
-- **Per-monitor wallpapers** — one wallpaper everywhere, or a different one per display. Renders *behind* desktop icons (WorkerW).
+- **Per-monitor wallpapers** — one wallpaper everywhere, a different one per display, or **leave a display untouched** (its real wallpaper + icons stay). Renders *behind* desktop icons (WorkerW).
 - **Library & playlists** — save/star wallpapers, point at a local folder, and rotate a playlist on a timer (with shuffle).
 - **Performance** — auto-pause on fullscreen apps or on battery, plus a shader frame-rate cap.
 - **Global hotkeys** — `Ctrl`+`Alt`+`→` next · `Ctrl`+`Alt`+`P` pause/resume · `Ctrl`+`Alt`+`M` mute.

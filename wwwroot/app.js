@@ -311,6 +311,13 @@ async function renderSettings() {
            <option value="30" ${fps === 30 ? 'selected' : ''}>30 FPS</option>
          </select>`)}
 
+      ${state.monitors.length > 1 ? `<h2 class="group">Displays</h2>` +
+        state.monitors.map((m, i) => settingRow(
+          'Monitor ' + (i + 1) + (m.primary ? ' (primary)' : ''),
+          'Leave untouched — keep my normal wallpaper &amp; icons on ' + esc(m.label),
+          toggle('mon-' + i, m.disabled)
+        )).join('') : ''}
+
       <h2 class="group">About</h2>
       ${settingRow('Updates', `Current version v${esc(state.version)}.`, '<button id="checkUpdate" class="ghost">Check now</button>')}
       <div class="about">
@@ -337,6 +344,17 @@ async function renderSettings() {
   };
   ['setStartup', 'setUpdates', 'setMute', 'setFs', 'setBat', 'setFps', 'setTheme', 'setAccent']
     .forEach((id) => ($('#' + id).onchange = save));
+  state.monitors.forEach((m, i) => {
+    const el = $('#mon-' + i);
+    if (!el) return;
+    el.onchange = async (e) => {
+      try {
+        await api('setMonitorDisabled', { id: m.id, disabled: e.target.checked });
+        m.disabled = e.target.checked;
+        toast(e.target.checked ? 'Monitor left untouched' : 'Monitor enabled');
+      } catch (err) { toast(err.message, true); }
+    };
+  });
   $('#setFolder').onclick = async () => {
     if (await pickFolder()) $('#folderText').textContent = state.settings.libraryFolder || 'Not set';
   };
