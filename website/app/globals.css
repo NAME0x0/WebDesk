@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #08090d;
+  --color-panel: #13141b;
+  --color-panel-2: #1a1c25;
+  --color-line: #23252f;
+  --color-text: #e9ebf2;
+  --color-muted: #888ea1;
+  /* Live accent: driven by the picker via the --accent custom property. */
+  --color-accent: var(--accent, #38bdf8);
+
+  --font-display: var(--font-sora), system-ui, sans-serif;
+  --font-body: var(--font-inter), system-ui, sans-serif;
+}
+
+:root {
+  --accent: #38bdf8;
+  color-scheme: dark;
+}
+
+* { border-color: var(--color-line); }
+
+html {
+  scroll-behavior: smooth;
+  background: var(--color-bg);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 40%, transparent);
+}
+
+h1, h2, h3, .font-display { font-family: var(--font-display); letter-spacing: -0.02em; }
+
+/* --- reusable bits --- */
+.glass {
+  background: color-mix(in oklab, var(--color-panel) 72%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid color-mix(in oklab, var(--color-line) 80%, transparent);
+}
+
+.accent-text { color: var(--accent); }
+.accent-bg { background: var(--accent); }
+
+.accent-glow {
+  box-shadow: 0 0 80px -16px color-mix(in oklab, var(--accent) 65%, transparent);
+}
+.accent-ring:hover {
+  border-color: color-mix(in oklab, var(--accent) 70%, var(--color-line));
+}
+
+.grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.hero-grid {
+  background-image: linear-gradient(color-mix(in oklab, var(--color-line) 60%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--color-line) 60%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 75%);
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-float { animation: float-y 7s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .animate-float { animation: none !important; }
+}
