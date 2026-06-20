@@ -3,9 +3,9 @@
 **Turn any website, video, image, or WebGL shader into a live Windows wallpaper.**
 A free, open-source alternative to Wallpaper Engine and Lively — built on C#/.NET 8 + WebView2.
 
-### 🌐 [webdesk-psi.vercel.app](https://webdesk-psi.vercel.app) · [Download](https://github.com/NAME0x0/WebDesk/releases/latest)
+### 🌐 [webdesk.vercel.app](https://webdesk.vercel.app) · [Download](https://github.com/NAME0x0/WebDesk/releases/latest)
 
-[![Website](https://img.shields.io/badge/website-webdesk--psi.vercel.app-38bdf8?logo=vercel&logoColor=white)](https://webdesk-psi.vercel.app)
+[![Website](https://img.shields.io/badge/website-webdesk.vercel.app-38bdf8?logo=vercel&logoColor=white)](https://webdesk.vercel.app)
 [![CI](https://github.com/NAME0x0/WebDesk/actions/workflows/ci.yml/badge.svg)](https://github.com/NAME0x0/WebDesk/actions/workflows/ci.yml)
 [![Release](https://github.com/NAME0x0/WebDesk/actions/workflows/release.yml/badge.svg)](https://github.com/NAME0x0/WebDesk/actions/workflows/release.yml)
 [![Latest release](https://img.shields.io/github/v/release/NAME0x0/WebDesk?sort=semver)](https://github.com/NAME0x0/WebDesk/releases/latest)
@@ -120,7 +120,7 @@ git push origin vX.Y.Z
 
 ## 🌐 Website
 
-The landing page lives in [`website/`](website) — Next.js + Tailwind + Framer Motion, with a live WebGL shader hero and a user-controllable accent color. It pulls the latest release and the Discover catalog at build time, so the download button and gallery stay current. Deployed on Vercel ([webdesk-psi.vercel.app](https://webdesk-psi.vercel.app)).
+The landing page lives in [`website/`](website) — Next.js + Tailwind + Framer Motion, with a live WebGL shader hero and a user-controllable accent color. It pulls the latest release and the Discover catalog at build time, so the download button and gallery stay current. Deployed on Vercel ([webdesk.vercel.app](https://webdesk.vercel.app)).
 
 ```bash
 cd website
