@@ -60,19 +60,67 @@ internal sealed class WallpaperSurface : Form
         }
     }
 
-    /// <summary>Reparent under the desktop host and position over this monitor.</summary>
-    public void Attach(IntPtr host)
+    /// <summary>Reparent under Explorer's desktop layer and position over this monitor.</summary>
+    public bool Attach(DesktopHostHandles desktop)
     {
-        if (host == IntPtr.Zero) return;
+        var host = desktop.IsRaisedDesktop ? desktop.Progman : desktop.WorkerW;
+        if (host == IntPtr.Zero) return false;
+
+        if (desktop.IsRaisedDesktop)
+        {
+            // Raised desktop requires a layered Progman child between the
+            // transparent icon view and Explorer's background WorkerW.
+            var windowStyle = NativeMethods.GetWindowLong(Handle, NativeMethods.GWL_STYLE);
+            NativeMethods.SetWindowLong(
+                Handle,
+                NativeMethods.GWL_STYLE,
+                (windowStyle & ~NativeMethods.WS_POPUP) | NativeMethods.WS_CHILD);
+
+            var raisedExStyle = NativeMethods.GetWindowLong(Handle, NativeMethods.GWL_EXSTYLE);
+            NativeMethods.SetWindowLong(
+                Handle,
+                NativeMethods.GWL_EXSTYLE,
+                raisedExStyle | NativeMethods.WS_EX_NOACTIVATE | NativeMethods.WS_EX_LAYERED);
+
+            if (!NativeMethods.SetLayeredWindowAttributes(
+                    Handle, 0, byte.MaxValue, NativeMethods.LWA_ALPHA))
+                return false;
+        }
 
         NativeMethods.SetParent(Handle, host);
+        if (NativeMethods.GetParent(Handle) != host) return false;
+
         var style = NativeMethods.GetWindowLong(Handle, NativeMethods.GWL_EXSTYLE);
         NativeMethods.SetWindowLong(Handle, NativeMethods.GWL_EXSTYLE, style | NativeMethods.WS_EX_NOACTIVATE);
 
         // Position relative to the host's top-left (== virtual screen origin).
         var v = SystemInformation.VirtualScreen;
-        Location = new Point(_screen.Bounds.X - v.X, _screen.Bounds.Y - v.Y);
-        Size = _screen.Bounds.Size;
+        var insertAfter = desktop.IsRaisedDesktop
+            ? desktop.ShellView
+            : NativeMethods.HWND_BOTTOM;
+        var positioned = NativeMethods.SetWindowPos(
+            Handle,
+            insertAfter,
+            _screen.Bounds.X - v.X,
+            _screen.Bounds.Y - v.Y,
+            _screen.Bounds.Width,
+            _screen.Bounds.Height,
+            NativeMethods.SWP_NOACTIVATE | NativeMethods.SWP_FRAMECHANGED);
+
+        if (!positioned) return false;
+
+        if (desktop.IsRaisedDesktop &&
+            !NativeMethods.SetWindowPos(
+                desktop.WorkerW,
+                NativeMethods.HWND_BOTTOM,
+                0,
+                0,
+                0,
+                0,
+                NativeMethods.SWP_NOMOVE | NativeMethods.SWP_NOSIZE | NativeMethods.SWP_NOACTIVATE))
+            return false;
+
+        return true;
     }
 
     public async Task InitializeAsync(CoreWebView2Environment env)

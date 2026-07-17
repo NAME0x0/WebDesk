@@ -39,7 +39,6 @@ internal sealed class WebDeskContext : ApplicationContext
         _pauseItem = new ToolStripMenuItem(PauseLabel(), null, (_, _) => TogglePause());
         _tray = CreateTray();
 
-        foreach (var surface in _surfaces) surface.Show();
         _ = StartAsync();
     }
 
@@ -55,8 +54,19 @@ internal sealed class WebDeskContext : ApplicationContext
             };
             var env = await CoreWebView2Environment.CreateAsync(null, AppPaths.WebViewWallpaper, options);
 
-            var host = DesktopHost.Resolve();
-            foreach (var surface in _surfaces) surface.Attach(host);
+            var desktop = DesktopHost.Resolve()
+                ?? throw new InvalidOperationException(
+                    "Explorer's desktop wallpaper layer could not be located.");
+
+            foreach (var surface in _surfaces)
+            {
+                // Showing first creates the native HWND expected by SetParent;
+                // resolve Explorer before this point so it cannot remain top-level.
+                surface.Show();
+                if (!surface.Attach(desktop))
+                    throw new InvalidOperationException(
+                        $"Could not attach the wallpaper surface for {surface.DeviceName}.");
+            }
             await Task.WhenAll(_surfaces.Select(s => s.InitializeAsync(env)));
 
             _controller.RestoreOnStartup();
